@@ -28,8 +28,8 @@ int main(int argc, const char * argv[]) {
     s.dropFact("Mother", "Marry", "Stanley");
     
     // print facts
-    s.printGraph();
-    cout << "****" << endl << endl;
+//    s.printGraph();
+//    cout << "****" << endl << endl;
     
     // insert rules
     s.insertRule("Grandfather", {{"Father", "Father"}});    // GrandFather is AND, hence one list, Father to Father
@@ -38,13 +38,13 @@ int main(int argc, const char * argv[]) {
     s.insertRule("GrandParent", {{"Father", "Father"}, {"Father", "Mother"}, {"Mother", "Father"}, {"Mother", "Mother"}});  // GrandParent is OR mixed with AND, four list
     
     // query rules
-    s.queryRule("Grandfather");
+    s.queryRule("Grandfather", {});
     cout << "****" << endl;
-    s.queryRule("Grandgrandfather");
+    s.queryRule("Grandgrandfather", {});
     cout << "****" << endl;
-    s.queryRule("Parent");
+    s.queryRule("Parent", {});
     cout << "****" << endl;
-    s.queryRule("GrandParent");
+    s.queryRule("GrandParent", {"#", "Stanley", "#"});     // first name filter with "John"
     cout << "****" << endl << endl;
     
     return 0;

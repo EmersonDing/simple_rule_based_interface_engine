@@ -37,6 +37,6 @@ public:
     void insertFact(string relation, string subject, string object);
     void printGraph();
     void dropFact(string relation, string subject, string object);
-    void queryRule(string _rule);
+    void queryRule(string _rule, vector<string> filter);
 };
 

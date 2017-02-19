@@ -43,7 +43,7 @@ void SRI::dropFact(string relation, string subject, string object) {
     knowledgebase.dropFact(relation, subject, object);
 }
 
-void SRI::queryRule(string _rule) {
+void SRI::queryRule(string _rule, vector<string> filter) {
     auto rule = rulebase.getRule(_rule);
     if(rule.empty()) {
         cout << "rule not exist" << endl;
@@ -59,6 +59,10 @@ void SRI::queryRule(string _rule) {
     }
     // print name
     for(auto row: ret) {
+        for(int i = 0; i < filter.size(); ++i)
+            if(filter[i] != "#" && filter[i] != row[i])
+                goto notPrint;
         cout << row.front() << '\t' << row.back() << endl;
+        notPrint:;
     }
 }
