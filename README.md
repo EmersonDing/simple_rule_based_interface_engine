@@ -9,3 +9,5 @@
 	e.g. Father(Roger,John)
     Rule
 	e.g. Parent($X,$Y):-OR Father($X,$Y) Mother($X,$Y)
+
+#Note: This should only adjust Maddy's branch.
