@@ -18,8 +18,16 @@
 using namespace std;
 #endif /* rulebase_hpp */
 
+
+struct Rule {
+    bool isAnd;
+    string name;
+    pair<string, string> params; // params for rule. not necessary,
+    unordered_map<string, unordered_set<string>> ruleGraph;
+};
+
 class RuleBase {
-    unordered_map<string, vector<list<string>>> rules;  // each list<string> will be regard as a relationship chain
+    unordered_map<string, Rule> rules;  // each list<string> will be regard as a relationship chain
 public:
     void insertRule(string name, vector<list<string>> facts);   // if a new rule is relied on another rule, replace input list with that rule. TODO
     void dropRule(string rule);
