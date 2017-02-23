@@ -32,20 +32,22 @@ int main(int argc, const char * argv[]) {
 //    cout << "****" << endl << endl;
     
     // insert rules
-    s.insertRule("Grandfather", {{"Father", "Father"}});    // GrandFather is AND, hence one list, Father to Father
-    s.insertRule("Grandgrandfather", {{"Father", "Father", "Father"}}); // one list
-    s.insertRule("Parent", {{"Father"}, {"Mother"}});   // Parent is OR, two list
-    s.insertRule("GrandParent", {{"Father", "Father"}, {"Father", "Mother"}, {"Mother", "Father"}, {"Mother", "Mother"}});  // GrandParent is OR mixed with AND, four list
+    s.insertRule("Grandfather", {"X", "Y"}, true, {{"Father", {"X", "Z"}}, {"Father", {"Z", "Y"}}});
+    s.insertRule("Parent", {"X", "Y"}, false, {{"Father", {"X", "Y"}}, {"Mother", {"X", "Y"}}});
+    s.insertRule("GrandParent", {"X", "Y"}, true, {{"Parent", {"X", "Z"}}, {"Parent", {"Z", "Y"}}});
+    s.insertRule("GrandGrandFather", {"X", "Y"}, false, {{"Father", {"X", "Z"}}, {"GrandParent", {"Z", "Y"}}});
+//    s.printRule();
+    
     
     // query rules
-    s.queryRule("Grandfather", {});
-    cout << "****" << endl;
-    s.queryRule("Grandgrandfather", {});
-    cout << "****" << endl;
-    s.queryRule("Parent", {});
-    cout << "****" << endl;
-    s.queryRule("GrandParent", {"#", "Stanley", "#"});     // first name filter with "John"
-    cout << "****" << endl << endl;
+//    s.queryRule("Grandfather", {});
+//    cout << "****" << endl;
+//    s.queryRule("Grandgrandfather", {});
+//    cout << "****" << endl;
+//    s.queryRule("Parent", {});
+//    cout << "****" << endl;
+//    s.queryRule("GrandParent", {"#", "Stanley", "#"});     // first name filter with "John"
+//    cout << "****" << endl << endl;
     
     return 0;
 }

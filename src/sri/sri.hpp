@@ -31,7 +31,7 @@ public:
     void executeQuery(string input);    // TODO
     void load();			// load rules and facts. TODO
     void dump();			// dump rules and facts. TODO
-    void insertRule(string name, vector<list<string>> facts);
+    void insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params);
     void dropRule();
     void printRule();
     void insertFact(string relation, string subject, string object);

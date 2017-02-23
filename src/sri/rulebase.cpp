@@ -7,29 +7,26 @@
 //
 
 #include "rulebase.hpp"
-void RuleBase::insertRule(string name, vector<list<string>> facts) {
+void RuleBase::insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params) {
     if(rules.count(name)) {
         cout << "rule exists" << endl;
         return ;
     }
-    for(auto fact: facts)
-        rules[name].push_back(fact);
+    Rule rule(name, isAnd, startEnd, params);
+    rules[name] = rule;
 }
 
-vector<list<string>> RuleBase::getRule(string rule) {
+Rule RuleBase::getRule(string rule) {
     if(!rules.count(rule))
-        return vector<list<string>>();
+        return Rule();
     return rules[rule];
 }
 
 void RuleBase::printRules() {
-    for(auto& rule: rules)
-        for(auto& ruleBody: rule.second) {
-            cout << rule.first;
-            for(auto& fact: ruleBody)
-                cout << "->" << fact;
-            cout << endl;
-        }
+    for(auto& rule: rules) {
+        cout << rule.first << endl;
+        rule.second.print();
+    }
 }
 
 void RuleBase::dropRule(string rule) {

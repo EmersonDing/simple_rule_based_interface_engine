@@ -23,8 +23,8 @@ void SRI::queryRuleHelper(vector<vector<string>>& ret, vector<string>& row, cons
 
 // calling parseStringInput() to parse string, call function of drop, insert
 // in Base classes to execute query
-void SRI::insertRule(string name, vector<list<string>> facts) {
-    rulebase.insertRule(name, facts);
+void SRI::insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params) {
+    rulebase.insertRule(name, startEnd, isAnd, params);
 }
 
 void SRI::printRule() {
@@ -44,25 +44,25 @@ void SRI::dropFact(string relation, string subject, string object) {
 }
 
 void SRI::queryRule(string _rule, vector<string> filter) {
-    auto rule = rulebase.getRule(_rule);
-    if(rule.empty()) {
-        cout << "rule not exist" << endl;
-    }
-    vector<vector<string>> ret;
-    for(auto& r: rule) {
-        auto front = knowledgebase.queryRelation(r.front());
-        for(auto& f: front) {
-            vector<string> row(1, f.first);
-            row.push_back(f.second);
-            queryRuleHelper(ret, row, r, next(r.begin(),1), f.second);
-        }
-    }
-    // print name
-    for(auto row: ret) {
-        for(int i = 0; i < filter.size(); ++i)
-            if(filter[i] != "#" && filter[i] != row[i])
-                goto notPrint;
-        cout << row.front() << '\t' << row.back() << endl;
-        notPrint:;
-    }
+//    auto rule = rulebase.getRule(_rule);
+//    if(rule == Rule()) {
+//        cout << "rule not exist" << endl;
+//    }
+//    vector<vector<string>> ret;
+//    for(auto& r: rule) {
+//        auto front = knowledgebase.queryRelation(r.front());
+//        for(auto& f: front) {
+//            vector<string> row(1, f.first);
+//            row.push_back(f.second);
+//            queryRuleHelper(ret, row, r, next(r.begin(),1), f.second);
+//        }
+//    }
+//    // print name
+//    for(auto row: ret) {
+//        for(int i = 0; i < filter.size(); ++i)
+//            if(filter[i] != "#" && filter[i] != row[i])
+//                goto notPrint;
+//        cout << row.front() << '\t' << row.back() << endl;
+//        notPrint:;
+//    }
 }
