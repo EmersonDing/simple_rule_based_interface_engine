@@ -13,14 +13,14 @@ void KnowledgeBase::insertFact(string relation, string subject, string object) {
         cout << "relationship already exist." << endl;
         return ;
     }
-    graph[subject].relation[relation].insert(object);
+    graph[subject].relation[relation].push_back(object);
 }
 void KnowledgeBase::dropFact(string relation, string subject, string object) {
-    if(!graph.count(subject) || !graph[subject].relation.count(relation) || !graph[subject].relation[relation].count(object)) {
+   /* if(!graph.count(subject) || !graph[subject].relation.count(relation) || !graph[subject].relation[relation].count(object)) {
         cout << "no such relationship." << endl;
         return ;
     }
-    graph[subject].relation[relation].erase(object);
+    graph[subject].relation[relation].erase(object);*/
 }
 void KnowledgeBase::printGraph() {
     for(auto& subject: graph)
@@ -43,3 +43,24 @@ vector<string> KnowledgeBase::queryRelation(string _relation, string subject) {
         facts.push_back(object);
     return facts;
 }
+
+void KnowledgeBase::writeToFile(std::ofstream& outfile)
+{
+    for(auto& subject: graph)
+        for(auto& relation: subject.second.relation)
+            for(auto& object: relation.second)
+                outfile << "FACT " << relation.first << "(" << subject.first << "," << object << ")" << endl;
+}
+
+bool KnowledgeBase::isFact(string relation, string subject, string object)
+{
+    vector<string> relations = graph[subject].relation[relation];
+    for(string obj :relations)
+    {
+        if(obj == object)
+            return true;
+    }
+    return false;
+}
+
+

@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <fstream>
 using namespace std;
 #endif /* knowledge_hpp */
 
@@ -24,12 +25,13 @@ public:
     // all relations of a people
     // e.g. {{"Father", {Peter"}}, {"Brother", {"John"}}}
     // means Father(Mark,Peter), Brother(Mark,John)
-    unordered_map<string, unordered_set<string>> relation;
+    unordered_map<string, vector<string>> relation;
 };
 
 class KnowledgeBase {
+    public:
     unordered_map<string, FactNode> graph;		// store people and their relations
-public:
+
     void insertFact(string relation, string subject, string object);
     void dropFact(string relation, string subject, string object);
     void printGraph();
@@ -37,4 +39,8 @@ public:
     vector<pair<string, string>> queryRelation(string _relation);
     // given relation and subject
     vector<string> queryRelation(string _relation, string subject);
+    
+    void writeToFile(ofstream& outfile);
+    
+    bool isFact(string relation, string subject, string object);
 };

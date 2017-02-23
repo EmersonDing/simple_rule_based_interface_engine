@@ -23,29 +23,45 @@ int main(int argc, const char * argv[]) {
     s.insertFact("Mother", "Marry", "Stanley");
     s.insertFact("Father", "Stanley", "Lucy");
     s.insertFact("Mother", "Jane", "Mark");
+    s.insertFact("Parent", "Mark", "Greg");
     
     // drop facts
     s.dropFact("Mother", "Marry", "Stanley");
     
     // print facts
-//    s.printGraph();
-//    cout << "****" << endl << endl;
+    s.printGraph();
+    cout << "****" << endl << endl;
     
     // insert rules
-    s.insertRule("Grandfather", {{"Father", "Father"}});    // GrandFather is AND, hence one list, Father to Father
-    s.insertRule("Grandgrandfather", {{"Father", "Father", "Father"}}); // one list
+    list<pair<string, list<string>>> gfFacts;
+    //RULE GodFather($X,$Y):- AND Friend($X,$Z) Parent($Z,$Y)
+    gfFacts.push_back({"Father" ,{"$A", "$B"}});
+    gfFacts.push_back({"Parent" ,{"$B", "$C"}});
+    //gfFacts["Father"] = {"$A", "$B"};
+    
+    
+    s.insertRule(true, "Grandfather", {"$A", "$B"}, gfFacts);    // GrandFather is AND, hence one list, Father to Father
+    s.queryRule("Grandfather");
+    /*s.insertRule("Grandgrandfather", {{"Father", "Father", "Father"}}); // one list
     s.insertRule("Parent", {{"Father"}, {"Mother"}});   // Parent is OR, two list
     s.insertRule("GrandParent", {{"Father", "Father"}, {"Father", "Mother"}, {"Mother", "Father"}, {"Mother", "Mother"}});  // GrandParent is OR mixed with AND, four list
     
     // query rules
-    s.queryRule("Grandfather", {});
+    s.queryRule("Grandfather");
     cout << "****" << endl;
-    s.queryRule("Grandgrandfather", {});
+    s.queryRule("Grandgrandfather");
     cout << "****" << endl;
-    s.queryRule("Parent", {});
+    s.queryRule("Parent");
     cout << "****" << endl;
-    s.queryRule("GrandParent", {"#", "Stanley", "#"});     // first name filter with "John"
-    cout << "****" << endl << endl;
+    s.queryRule("GrandParent");
+    
+    s.load("InputFile.txt");
+    s.printGraph();
+    s.printRule();
+    
+    s.dump();
+    
+    cout << "****" << endl << endl;*/
     
     return 0;
 }
