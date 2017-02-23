@@ -9,6 +9,9 @@
 #ifndef sri_hpp
 #define sri_hpp
 
+#include <fstream> //for file operations
+#include <sstream>
+
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -21,7 +24,14 @@ using namespace std;
 #endif /* sri_hpp */
 
 
+
+
+
 class SRI {
+    
+    
+    
+    
     void parseStringInput();		// parse input string
     void parseStringOutput();		// parse output string
     void queryRuleHelper(vector<vector<string>>& ret, vector<string>& row, const list<string>& rule, list<string>::iterator index, string start);
@@ -29,14 +39,14 @@ class SRI {
     RuleBase rulebase;
 public:
     void executeQuery(string input);    // TODO
-    void load();			// load rules and facts. TODO
-    void dump();			// dump rules and facts. TODO
-    void insertRule(string name, vector<list<string>> facts);
+    void load(const string& path);			// load rules and facts. TODO
+    void dump(const string& path = "out.txt");			// dump rules and facts. TODO
+    void insertRule(bool isAND, string name, list<string> rParams, list<pair<string, list<string>>> facts);
     void dropRule();
-    void printRule();
+    //void printRule();
     void insertFact(string relation, string subject, string object);
     void printGraph();
     void dropFact(string relation, string subject, string object);
-    void queryRule(string _rule, vector<string> filter);
+    void queryRule(string _rule);
 };
 

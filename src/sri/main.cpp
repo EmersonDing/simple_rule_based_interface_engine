@@ -18,34 +18,50 @@ int main(int argc, const char * argv[]) {
     SRI s;
     // insert facts
     s.insertFact("Father", "Mark", "Greg");
+    s.insertFact("Superior", "Mark", "Greg");
     s.insertFact("Father", "Mark", "Stanley");
     s.insertFact("Father", "John", "Mark");
     s.insertFact("Mother", "Marry", "Stanley");
     s.insertFact("Father", "Stanley", "Lucy");
     s.insertFact("Mother", "Jane", "Mark");
+    s.insertFact("Parent", "Greg", "Jim");
     
     // drop facts
     s.dropFact("Mother", "Marry", "Stanley");
     
     // print facts
-//    s.printGraph();
-//    cout << "****" << endl << endl;
+    s.printGraph();
+    cout << "****" << endl << endl;
     
     // insert rules
-    s.insertRule("Grandfather", {{"Father", "Father"}});    // GrandFather is AND, hence one list, Father to Father
-    s.insertRule("Grandgrandfather", {{"Father", "Father", "Father"}}); // one list
-    s.insertRule("Parent", {{"Father"}, {"Mother"}});   // Parent is OR, two list
-    s.insertRule("GrandParent", {{"Father", "Father"}, {"Father", "Mother"}, {"Mother", "Father"}, {"Mother", "Mother"}});  // GrandParent is OR mixed with AND, four list
+    list<pair<string, list<string>>> gfFacts;
+
+    gfFacts.push_back({"Father" ,{"$A", "$B"}});
+    gfFacts.push_back({"Parent" ,{"$B", "$C"}});
+
     
-    // query rules
-    s.queryRule("Grandfather", {});
-    cout << "****" << endl;
-    s.queryRule("Grandgrandfather", {});
-    cout << "****" << endl;
-    s.queryRule("Parent", {});
-    cout << "****" << endl;
-    s.queryRule("GrandParent", {"#", "Stanley", "#"});     // first name filter with "John"
-    cout << "****" << endl << endl;
+    
+    s.insertRule(true, "Grandfather", {"$A", "$C"}, gfFacts);    // GrandFather is AND, hence one list, Father to Father
+    s.insertRule(true, "Master", {"$A", "$B"}, {{"Father" ,{"$A", "$B"}}, {"Superior" ,{"$A", "$B"}}});//notice new way of adding rules
+    
+    
+    //s.queryRule("Master");
+    s.queryRule("Grandfather");//this isn't quite working, needs a LOT of work!!!!!!!
+    
+    
+    
+    
+    
+    
+    /*
+    
+    s.load("InputFile.txt");
+    s.printGraph();
+    s.printRule();
+    
+    s.dump();
+    
+    cout << "****" << endl << endl;*/
     
     return 0;
 }
