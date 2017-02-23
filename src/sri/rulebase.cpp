@@ -59,6 +59,7 @@ Rule RuleBase::getRule(string rule)
 {
     //if(!rules.count(rule))
       //  return vector<list<string>>();
+    cout << "Got rule: " << rule << endl;
     return rules[rule];
 }
 
