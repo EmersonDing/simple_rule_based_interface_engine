@@ -40,8 +40,8 @@ int main(int argc, const char * argv[]) {
 
     
     // query rules
-//    s.queryRule("Grandfather", {});
-//    cout << "****" << endl;
+    s.queryRule("Grandfather");
+    cout << "****" << endl;
 //    s.queryRule("Grandgrandfather", {});
 //    cout << "****" << endl;
 //    s.queryRule("Parent", {});

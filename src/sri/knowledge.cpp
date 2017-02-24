@@ -14,6 +14,7 @@ void KnowledgeBase::insertFact(string relation, string subject, string object) {
         return ;
     }
     graph[subject].relation[relation].insert(object);
+    ++knowledge_dict[relation];
 }
 void KnowledgeBase::dropFact(string relation, string subject, string object) {
     if(!graph.count(subject) || !graph[subject].relation.count(relation) || !graph[subject].relation[relation].count(object)) {
@@ -21,6 +22,8 @@ void KnowledgeBase::dropFact(string relation, string subject, string object) {
         return ;
     }
     graph[subject].relation[relation].erase(object);
+    if(--knowledge_dict[relation] == 0)
+        knowledge_dict.erase(relation);
 }
 void KnowledgeBase::printGraph() {
     for(auto& subject: graph)
@@ -29,14 +32,14 @@ void KnowledgeBase::printGraph() {
                 cout << relation.first << ": " << subject.first << "," << object << endl;
 }
 
-vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, string subject) {
+vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, string _subject) {
     vector<pair<string, string>> facts;
-    if(subject == "")
+    if(_subject == "")
         for(auto& subject: graph)
             for(auto& object: subject.second.relation[_relation])
                 facts.push_back(make_pair(subject.first, object));
     else
-        for(auto& object: graph[subject].relation[_relation])
-            facts.push_back(make_pair(subject, object));
+        for(auto& object: graph[_subject].relation[_relation])
+            facts.push_back(make_pair(_subject, object));
     return facts;
 }

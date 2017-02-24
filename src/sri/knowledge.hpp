@@ -29,6 +29,7 @@ public:
 
 class KnowledgeBase {
 public:
+    unordered_map<string, int> knowledge_dict;
     unordered_map<string, FactNode> graph;		// store people and their relations
     void insertFact(string relation, string subject, string object);
     void dropFact(string relation, string subject, string object);

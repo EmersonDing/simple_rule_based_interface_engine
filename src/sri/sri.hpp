@@ -24,7 +24,7 @@ using namespace std;
 class SRI {
     void parseStringInput();		// parse input string
     void parseStringOutput();		// parse output string
-    vector<pair<string, string>> queryRuleHelper(string start, string end, vector<pair<string, string>> row, unordered_set<string>& visited, string s, string e);
+    vector<pair<string, string>> queryRuleHelper(Rule rule, string start, string end, unordered_set<string>& visited, string s, string e);
     RuleBase rulebase;
 public:
     KnowledgeBase knowledgebase;

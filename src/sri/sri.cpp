@@ -7,20 +7,6 @@
 //
 
 #include "sri.hpp"
-//void SRI::queryRuleHelper(vector<vector<string>>& ret, vector<string>& row, const list<string>& rule, list<string>::iterator index, string start) {
-//    if(index == rule.end()) {
-//        ret.push_back(row);
-//        return ;
-//    }
-//    auto next = knowledgebase.queryRelation(*index, start);
-//    for(auto node: next) {
-//        row.push_back(node);
-//        queryRuleHelper(ret, row, rule, ++index, node);
-//        --index;
-//        row.pop_back();
-//    }
-//}
-
 // calling parseStringInput() to parse string, call function of drop, insert
 // in Base classes to execute query
 void SRI::insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params) {
@@ -43,36 +29,51 @@ void SRI::dropFact(string relation, string subject, string object) {
     knowledgebase.dropFact(relation, subject, object);
 }
 
-vector<pair<string, string>> SRI::queryRuleHelper(string start, string end, vector<pair<string, string>> row, unordered_set<string>& visited, string s, string e) {
+vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, string end, unordered_set<string>& visited, string s, string e) {
     if(start == end)
-        return row;
+        return {{"", s}};
     if(visited.count(start))
         return vector<pair<string, string>>();
     vector<pair<string, string>> ret;
+    bool isFirstEdge = false;
     visited.insert(start);
-    auto rule = rulebase.getRule(start);
-    if(rule.isAnd) {
-        for(auto& neighbor_node: rule.ruleGraph) {
-            for(auto& edge: neighbor_node.second) {
-                string relation = edge.first;
-                vector<pair<string, string>> r;
-                if(knowledgebase.graph.count(relation)) {
-                    r = knowledgebase.queryRelation(relation, start);
-                    
-                    for(auto& e: r) {
-                        auto sub = queryRuleHelper(, <#string end#>, <#vector<pair<string, string> > row#>, <#unordered_set<string> &visited#>, <#string s#>, <#string e#>)
-                    }
-                }
-                else
-                    r = queryRule(relation, s, e);
-                // put in dict
-            }
+    unordered_set<string> dict;
+    for(auto& edge: rule.ruleGraph[start]) {
+        string relation = edge.first;
+        vector<pair<string, string>> r;
+        vector<pair<string, string>> _row;
+        if(knowledgebase.knowledge_dict.count(relation)) {
+            r = knowledgebase.queryRelation(relation, s);
         }
-    } else {
-        
+        else {
+            r = queryRule(relation, s, e);
+        }
+        for(auto& _r: r) {
+            auto t = queryRuleHelper(rule, edge.second, end, visited, _r.second, e);
+            _row.insert(_row.end(), t.begin(), t.end());
+        }
+        if(!isFirstEdge || !rule.isAnd) {   // if is OR
+            isFirstEdge = true;
+            for(auto& _r: _row)
+                if(s == "")
+                    dict.insert(_r.first + " " + _r.second);
+                else
+                    dict.insert(s + " " + _r.second);
+        } else {
+            unordered_set<string> dict_temp;
+            for(auto& _r: _row) {
+                string str;
+                if(s == "")
+                    str = _r.first + " " + _r.second;
+                else
+                    str = s + " " + _r.second;
+                if(dict.count(str)) dict_temp.insert(str);
+            }
+            dict = dict_temp;
+        }
     }
-    
-    
+    for(auto& str: dict)
+        ret.push_back({str.substr(0, str.find(' ')), str.substr(str.find(' ')+1)});
     visited.erase(start);
     return ret;
 }
@@ -80,30 +81,7 @@ vector<pair<string, string>> SRI::queryRuleHelper(string start, string end, vect
 vector<pair<string, string>> SRI::queryRule(string _rule, string start, string end) {
     vector<pair<string, string>> ret;
     unordered_set<string> visited;
-    ret = queryRuleHelper("X", "Y", ret, visited, start, end);
+    Rule rule = rulebase.getRule(_rule);
+    ret = queryRuleHelper(rule, rule.startEnd.first, rule.startEnd.second, visited, start, end);
     return ret;
 }
-
-//void SRI::queryRule(string _rule, vector<string> filter) {
-//    auto rule = rulebase.getRule(_rule);
-//    if(rule == Rule()) {
-//        cout << "rule not exist" << endl;
-//    }
-//    vector<vector<string>> ret;
-//    for(auto& r: rule) {
-//        auto front = knowledgebase.queryRelation(r.front());
-//        for(auto& f: front) {
-//            vector<string> row(1, f.first);
-//            row.push_back(f.second);
-//            queryRuleHelper(ret, row, r, next(r.begin(),1), f.second);
-//        }
-//    }
-//    // print name
-//    for(auto row: ret) {
-//        for(int i = 0; i < filter.size(); ++i)
-//            if(filter[i] != "#" && filter[i] != row[i])
-//                goto notPrint;
-//        cout << row.front() << '\t' << row.back() << endl;
-//        notPrint:;
-//    }
-//}
