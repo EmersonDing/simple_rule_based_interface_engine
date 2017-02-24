@@ -19,7 +19,7 @@ using namespace std;
 #endif /* rulebase_hpp */
 
 
-class Rule {
+struct Rule {
     bool isAnd;
     string name;
     pair<string, string> startEnd; // params for rule. not necessary,
@@ -30,7 +30,6 @@ class Rule {
             ruleGraph[row.second.first].push_back({row.first, row.second.second});
     }
     
-public:
     Rule() {
         // TODO
     }
@@ -48,8 +47,8 @@ public:
 };
 
 class RuleBase {
-    unordered_map<string, Rule> rules;  // each list<string> will be regard as a relationship chain
 public:
+    unordered_map<string, Rule> rules;
     void insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params);   // if a new rule is relied on another rule, replace input list with that rule. TODO
     void dropRule(string rule);
     Rule getRule(string rule);

@@ -28,13 +28,10 @@ public:
 };
 
 class KnowledgeBase {
-    unordered_map<string, FactNode> graph;		// store people and their relations
 public:
+    unordered_map<string, FactNode> graph;		// store people and their relations
     void insertFact(string relation, string subject, string object);
     void dropFact(string relation, string subject, string object);
     void printGraph();
-    // given relation
-    vector<pair<string, string>> queryRelation(string _relation);
-    // given relation and subject
-    vector<string> queryRelation(string _relation, string subject);
+    vector<pair<string, string>> queryRelation(string _relation, string subject = "");
 };

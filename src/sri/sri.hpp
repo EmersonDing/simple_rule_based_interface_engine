@@ -24,10 +24,10 @@ using namespace std;
 class SRI {
     void parseStringInput();		// parse input string
     void parseStringOutput();		// parse output string
-    void queryRuleHelper(vector<vector<string>>& ret, vector<string>& row, const list<string>& rule, list<string>::iterator index, string start);
-    KnowledgeBase knowledgebase;
+    vector<pair<string, string>> queryRuleHelper(string start, string end, vector<pair<string, string>> row, unordered_set<string>& visited, string s, string e);
     RuleBase rulebase;
 public:
+    KnowledgeBase knowledgebase;
     void executeQuery(string input);    // TODO
     void load();			// load rules and facts. TODO
     void dump();			// dump rules and facts. TODO
@@ -37,6 +37,6 @@ public:
     void insertFact(string relation, string subject, string object);
     void printGraph();
     void dropFact(string relation, string subject, string object);
-    void queryRule(string _rule, vector<string> filter);
+    vector<pair<string, string>> queryRule(string _rule, string start = "", string end = "");
 };
 

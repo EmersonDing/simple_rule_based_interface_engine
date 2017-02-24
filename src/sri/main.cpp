@@ -37,7 +37,7 @@ int main(int argc, const char * argv[]) {
     s.insertRule("GrandParent", {"X", "Y"}, true, {{"Parent", {"X", "Z"}}, {"Parent", {"Z", "Y"}}});
     s.insertRule("GrandGrandFather", {"X", "Y"}, false, {{"Father", {"X", "Z"}}, {"GrandParent", {"Z", "Y"}}});
 //    s.printRule();
-    
+
     
     // query rules
 //    s.queryRule("Grandfather", {});

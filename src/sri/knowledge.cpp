@@ -28,18 +28,15 @@ void KnowledgeBase::printGraph() {
             for(auto& object: relation.second)
                 cout << relation.first << ": " << subject.first << "," << object << endl;
 }
-// given relation
-vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation) {
+
+vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, string subject) {
     vector<pair<string, string>> facts;
-    for(auto& subject: graph)
-        for(auto& object: subject.second.relation[_relation])
-            facts.push_back(make_pair(subject.first, object));
-    return facts;
-}
-// given relation and subject
-vector<string> KnowledgeBase::queryRelation(string _relation, string subject) {
-    vector<string> facts;
-    for(auto& object: graph[subject].relation[_relation])
-        facts.push_back(object);
+    if(subject == "")
+        for(auto& subject: graph)
+            for(auto& object: subject.second.relation[_relation])
+                facts.push_back(make_pair(subject.first, object));
+    else
+        for(auto& object: graph[subject].relation[_relation])
+            facts.push_back(make_pair(subject, object));
     return facts;
 }
