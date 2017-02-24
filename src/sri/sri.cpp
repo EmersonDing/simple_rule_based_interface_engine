@@ -31,7 +31,7 @@ void SRI::dropFact(string relation, string subject, string object) {
 
 vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, string end, unordered_set<string>& visited, string s, string e) {
     if(start == end)
-        return {{"", s}};
+        return {};
     if(visited.count(start))
         return vector<pair<string, string>>();
     vector<pair<string, string>> ret;
@@ -43,15 +43,21 @@ vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, strin
         vector<pair<string, string>> r;
         vector<pair<string, string>> _row;
         if(knowledgebase.knowledge_dict.count(relation)) {
-            r = knowledgebase.queryRelation(relation, s);
+            r = knowledgebase.queryRelation(relation, s, e);
         }
         else {
             r = queryRule(relation, s, e);
         }
-        for(auto& _r: r) {
-            auto t = queryRuleHelper(rule, edge.second, end, visited, _r.second, e);
-            _row.insert(_row.end(), t.begin(), t.end());
-        }
+        if(edge.second != end)
+            for(auto& _r: r) {
+                auto t = queryRuleHelper(rule, edge.second, end, visited, _r.second, e);
+                for(auto& _t: t)
+                    if(s == "") _t.first = _r.first;
+                    else _t.first = s;
+                _row.insert(_row.end(), t.begin(), t.end());
+            }
+        else
+            _row = r;
         if(!isFirstEdge || !rule.isAnd) {   // if is OR
             isFirstEdge = true;
             for(auto& _r: _row)
@@ -72,16 +78,23 @@ vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, strin
             dict = dict_temp;
         }
     }
-    for(auto& str: dict)
-        ret.push_back({str.substr(0, str.find(' ')), str.substr(str.find(' ')+1)});
+    for(auto& str: dict) {
+        string str1 = str.substr(0, str.find(' ')),
+               str2 = str.substr(str.find(' ')+1);
+        if(e == "" || e == str2)
+            ret.push_back({str1, str2});
+    }
     visited.erase(start);
     return ret;
 }
 
 vector<pair<string, string>> SRI::queryRule(string _rule, string start, string end) {
     vector<pair<string, string>> ret;
-    unordered_set<string> visited;
-    Rule rule = rulebase.getRule(_rule);
-    ret = queryRuleHelper(rule, rule.startEnd.first, rule.startEnd.second, visited, start, end);
+    if(!knowledgebase.knowledge_dict.count(_rule)) {
+        unordered_set<string> visited;
+        Rule rule = rulebase.getRule(_rule);
+        ret = queryRuleHelper(rule, rule.startEnd.first, rule.startEnd.second, visited, start, end);
+    } else
+        ret = knowledgebase.queryRelation(_rule, start, end);
     return ret;
 }

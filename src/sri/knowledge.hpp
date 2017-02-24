@@ -34,5 +34,5 @@ public:
     void insertFact(string relation, string subject, string object);
     void dropFact(string relation, string subject, string object);
     void printGraph();
-    vector<pair<string, string>> queryRelation(string _relation, string subject = "");
+    vector<pair<string, string>> queryRelation(string _relation, string subject = "", string _object = "");
 };

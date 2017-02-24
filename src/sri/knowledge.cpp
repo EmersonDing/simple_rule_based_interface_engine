@@ -32,14 +32,17 @@ void KnowledgeBase::printGraph() {
                 cout << relation.first << ": " << subject.first << "," << object << endl;
 }
 
-vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, string _subject) {
+vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, string _subject, string _object) {
     vector<pair<string, string>> facts;
     if(_subject == "")
         for(auto& subject: graph)
-            for(auto& object: subject.second.relation[_relation])
-                facts.push_back(make_pair(subject.first, object));
+            for(auto& object: subject.second.relation[_relation]) {
+                if(_object == "" || _object == object)
+                    facts.push_back(make_pair(subject.first, object));
+            }
     else
         for(auto& object: graph[_subject].relation[_relation])
-            facts.push_back(make_pair(_subject, object));
+            if(_object == "" || _object == object)
+                facts.push_back(make_pair(_subject, object));
     return facts;
 }

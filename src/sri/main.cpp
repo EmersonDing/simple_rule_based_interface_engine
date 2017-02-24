@@ -14,6 +14,11 @@
 #include "sri.hpp"
 using namespace std;
 
+void printPair(vector<pair<string, string>> v) {
+    for(auto& r: v)
+        cout << r.first << '\t' << r.second << endl;
+}
+
 int main(int argc, const char * argv[]) {
     SRI s;
     // insert facts
@@ -25,7 +30,7 @@ int main(int argc, const char * argv[]) {
     s.insertFact("Mother", "Jane", "Mark");
     
     // drop facts
-    s.dropFact("Mother", "Marry", "Stanley");
+//    s.dropFact("Mother", "Marry", "Stanley");
     
     // print facts
 //    s.printGraph();
@@ -40,14 +45,22 @@ int main(int argc, const char * argv[]) {
 
     
     // query rules
-    s.queryRule("Grandfather");
+    printPair(s.queryRule("Father"));   // all father fact
     cout << "****" << endl;
-//    s.queryRule("Grandgrandfather", {});
-//    cout << "****" << endl;
-//    s.queryRule("Parent", {});
-//    cout << "****" << endl;
-//    s.queryRule("GrandParent", {"#", "Stanley", "#"});     // first name filter with "John"
-//    cout << "****" << endl << endl;
+    printPair(s.queryRule("Father", "Mark"));   // Father: "Mark", "$"
+    cout << "****" << endl;
+    printPair(s.queryRule("Father", "", "Greg"));   // Father: "$", "Greg"
+    cout << "****" << endl;
+    printPair(s.queryRule("Parent"));   // Parent: "$", "$"
+    cout << "****" << endl;
+    printPair(s.queryRule("Parent", "John"));   // Parent: "$", "John"
+    cout << "****" << endl;
+    printPair(s.queryRule("GrandParent"));  // GrandParent: "$", "$"
+    cout << "****" << endl;
+    printPair(s.queryRule("GrandParent", "John"));  // GrandParent: "$", "John"
+    cout << "****" << endl;
+    printPair(s.queryRule("GrandGrandFather", "John")); // GrandGrandFather: "$", "John"
+    cout << "****" << endl;
     
     return 0;
 }
