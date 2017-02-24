@@ -59,7 +59,7 @@ struct Predicate
 
 struct Rule
 {
-    bool isAND;n
+    bool isAND;
     string name;
     list<Param> ruleParams;
     vector<Predicate> predicates;

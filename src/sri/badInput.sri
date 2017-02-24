@@ -1,0 +1,1 @@
+This is not a file meant for the SRI. When the SRI opens this file, it should throw some sort of error or let the user know that nothing was imported.

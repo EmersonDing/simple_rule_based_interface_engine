@@ -1,0 +1,12 @@
+# This file is the same as workExample.sri, with the 'wrong' file extension
+FACT Boss(Cindy,Maddy)
+FACT Boss(Alexa,Cindy)
+FACT Boss(Cindy,Naveen)
+FACT Boss(Alexa,Stephanie)
+FACT Boss(Lisa,Alexa)
+RULE Coworker($a,$b):- AND Boss($c,$a) Boss($c,$b)
+INFERENCE Boss(Alexa,$x) team
+INFERENCE Coworker($x,$y)
+FACT Boss(Alexa,Jasmine)
+INFERENCE Coworker($x,$y)
+INFERENCE Boss(Cindy,$x) team
