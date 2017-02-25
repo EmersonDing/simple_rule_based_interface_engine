@@ -13,14 +13,17 @@ void KnowledgeBase::insertFact(string relation, string subject, string object) {
         cout << "relationship already exist." << endl;
         return ;
     }
-    graph[subject].relation[relation].push_back(object);
+    graph[subject].relation[relation].insert(object);
+    ++knowledge_dict[relation];
 }
 void KnowledgeBase::dropFact(string relation, string subject, string object) {
-   /* if(!graph.count(subject) || !graph[subject].relation.count(relation) || !graph[subject].relation[relation].count(object)) {
+    if(!graph.count(subject) || !graph[subject].relation.count(relation) || !graph[subject].relation[relation].count(object)) {
         cout << "no such relationship." << endl;
         return ;
     }
-    graph[subject].relation[relation].erase(object);*/
+    graph[subject].relation[relation].erase(object);
+    if(--knowledge_dict[relation] == 0)
+        knowledge_dict.erase(relation);
 }
 void KnowledgeBase::printGraph() {
     for(auto& subject: graph)
@@ -28,20 +31,22 @@ void KnowledgeBase::printGraph() {
             for(auto& object: relation.second)
                 cout << relation.first << ": " << subject.first << "," << object << endl;
 }
-// given relation
-vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation) {
+
+vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, string _subject, string _object)
+{
     vector<pair<string, string>> facts;
-    for(auto& subject: graph)
-        for(auto& object: subject.second.relation[_relation])
-            facts.push_back(make_pair(subject.first, object));
+    if(_subject == "")
+        for(auto& subject: graph)
+            for(auto& object: subject.second.relation[_relation]) {
+                if(_object == "" || _object == object)
+                    facts.push_back(make_pair(subject.first, object));
+            }
+    else
+        for(auto& object: graph[_subject].relation[_relation])
+            if(_object == "" || _object == object)
+                facts.push_back(make_pair(_subject, object));
     return facts;
-}
-// given relation and subject
-vector<string> KnowledgeBase::queryRelation(string _relation, string subject) {
-    vector<string> facts;
-    for(auto& object: graph[subject].relation[_relation])
-        facts.push_back(object);
-    return facts;
+
 }
 
 void KnowledgeBase::writeToFile(std::ofstream& outfile)
@@ -51,16 +56,4 @@ void KnowledgeBase::writeToFile(std::ofstream& outfile)
             for(auto& object: relation.second)
                 outfile << "FACT " << relation.first << "(" << subject.first << "," << object << ")" << endl;
 }
-
-bool KnowledgeBase::isFact(string relation, string subject, string object)
-{
-    vector<string> relations = graph[subject].relation[relation];
-    for(string obj :relations)
-    {
-        if(obj == object)
-            return true;
-    }
-    return false;
-}
-
 

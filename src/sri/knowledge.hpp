@@ -25,22 +25,20 @@ public:
     // all relations of a people
     // e.g. {{"Father", {Peter"}}, {"Brother", {"John"}}}
     // means Father(Mark,Peter), Brother(Mark,John)
-    unordered_map<string, vector<string>> relation;
+    unordered_map<string, unordered_set<string>> relation;
 };
 
 class KnowledgeBase {
-    public:
+public:
+    unordered_map<string, int> knowledge_dict;
     unordered_map<string, FactNode> graph;		// store people and their relations
 
+    
+  
     void insertFact(string relation, string subject, string object);
     void dropFact(string relation, string subject, string object);
     void printGraph();
-    // given relation
-    vector<pair<string, string>> queryRelation(string _relation);
-    // given relation and subject
-    vector<string> queryRelation(string _relation, string subject);
+    vector<pair<string, string>> queryRelation(string _relation, string subject = "", string _object = "");
     
-    void writeToFile(ofstream& outfile);
-    
-    bool isFact(string relation, string subject, string object);
+    void writeToFile(std::ofstream& outfile);
 };

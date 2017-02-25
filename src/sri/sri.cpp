@@ -7,29 +7,75 @@
 //
 
 #include "sri.hpp"
-void SRI::queryRuleHelper(vector<vector<string>>& ret, vector<string>& row, const list<string>& rule, list<string>::iterator index, string start) {
-    if(index == rule.end()) {
-        ret.push_back(row);
-        return ;
+vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, string end, unordered_set<string>& visited, string s, string e) {
+    if(start == end)
+        return {};
+    if(visited.count(start))
+        return vector<pair<string, string>>();
+    vector<pair<string, string>> ret;
+    bool isFirstEdge = false;
+    visited.insert(start);
+    unordered_set<string> dict;
+    for(auto& edge: rule.ruleGraph[start]) {
+        string relation = edge.first;
+        vector<pair<string, string>> r;
+        vector<pair<string, string>> _row;
+        if(knowledgebase.knowledge_dict.count(relation)) {
+            r = knowledgebase.queryRelation(relation, s, e);
+        }
+        else {
+            r = queryRule(relation, s, e);
+        }
+        if(edge.second != end)
+            for(auto& _r: r) {
+                auto t = queryRuleHelper(rule, edge.second, end, visited, _r.second, e);
+                for(auto& _t: t)
+                    if(s == "") _t.first = _r.first;
+                    else _t.first = s;
+                _row.insert(_row.end(), t.begin(), t.end());
+            }
+        else
+            _row = r;
+        if(!isFirstEdge || !rule.isAnd) {   // if is OR
+            isFirstEdge = true;
+            for(auto& _r: _row)
+                if(s == "")
+                    dict.insert(_r.first + " " + _r.second);
+                else
+                    dict.insert(s + " " + _r.second);
+        } else {
+            unordered_set<string> dict_temp;
+            for(auto& _r: _row) {
+                string str;
+                if(s == "")
+                    str = _r.first + " " + _r.second;
+                else
+                    str = s + " " + _r.second;
+                if(dict.count(str)) dict_temp.insert(str);
+            }
+            dict = dict_temp;
+        }
     }
-    auto next = knowledgebase.queryRelation(*index, start);
-    for(auto node: next) {
-        row.push_back(node);
-        queryRuleHelper(ret, row, rule, ++index, node);
-        --index;
-        row.pop_back();
+    for(auto& str: dict) {
+        string str1 = str.substr(0, str.find(' ')),
+        str2 = str.substr(str.find(' ')+1);
+        if(e == "" || e == str2)
+            ret.push_back({str1, str2});
     }
+    visited.erase(start);
+    return ret;
 }
 
-// calling parseStringInput() to parse string, call function of drop, insert
-// in Base classes to execute query
-void SRI::insertRule(bool isAND, string name, list<string> rParams, list<pair<string, list<string>>> facts) {
-    rulebase.insertRule(isAND, name, rParams, facts);
+
+void SRI::insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params)
+{
+    rulebase.insertRule(name, startEnd, isAnd, params);
 }
 
-/*void SRI::printRule() {
+
+void SRI::printRule() {
     rulebase.printRules();
-}*/
+}
 
 void SRI::insertFact(string relation, string subject, string object) {
     knowledgebase.insertFact(relation, subject, object);
@@ -43,162 +89,213 @@ void SRI::dropFact(string relation, string subject, string object) {
     knowledgebase.dropFact(relation, subject, object);
 }
 
-void SRI::queryRule(string _rule) {
-    Rule rule = rulebase.getRule(_rule);
-    /*if() {
-        cout << "rule not exist" << endl;
-    }*/
-    
-    unordered_map<string, vector<string>> currentParamAssignments; //key is param, i.i 'A', vector is possible fits for this param
-    
-    unordered_set<string> params; //set of all params involved in this rule
-    for(Predicate predicate : rule.predicates)
-    {
-    
-        for(Param param : predicate.params)
-        {
-            params.insert(param.name);
-        }
-    }
-    
-    vector<string> ruleParams; //contains A, C for grandfather
-    for(Param param : rule.ruleParams)
-        ruleParams.push_back(param.name);
-
-    
-    
-    for(string param : params)
-    {
-        
-        //cout << param << endl;
-    }
-    
-    vector<pair<string, string>> initialSatisfiers;
-    
-    
-    for(Predicate& predicate : rule.predicates)
-    {
-        string paramFront = predicate.params.front().name;
-        string paramBack = predicate.params.back().name;
-        string factName = predicate.factName;
-        //vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation)
-        if(!currentParamAssignments.count(paramFront) && !currentParamAssignments.count(paramBack)) //if this param has not been assigned anything yet, find all relations that satsify the factName
-        {
-
-            initialSatisfiers = knowledgebase.queryRelation(factName);
-            for(pair<string, string> factPair : initialSatisfiers)
-            {
-                currentParamAssignments[paramFront].push_back(factPair.first);
-                currentParamAssignments[paramBack].push_back(factPair.second);
-                
-                
-            }
-        }
-        else if(!currentParamAssignments.count(paramBack)) // SA constant
-        {
-            
-            vector<string> possiblePredicateSatisfiers;
-            vector<string> preds = currentParamAssignments[paramFront]; //use this for the loop, that way we won't modify elements of this temp var before using them in the loop
-            for(string predSatisfier : preds)//currentParamAssignments[paramFront])
-            {
-                
-                cout << "Pred: " << predSatisfier << endl;
-                
-                vector<string>relations = knowledgebase.queryRelation(factName, predSatisfier );
-                
-                for(string p : relations)
-                    possiblePredicateSatisfiers.push_back(p);
-                if(!relations.size())
-                {//if no facts that satisfy with this assignment, remove it from options
-                    currentParamAssignments[paramFront].erase(std::remove(currentParamAssignments[paramFront].begin(), currentParamAssignments[paramFront].end(), predSatisfier), currentParamAssignments[paramFront].end());
-                    /*cout << "After DELETION\n";
-
-                    for(string assignment : currentParamAssignments[paramFront])
-                            cout << paramFront << " " << assignment << endl;
-                    cout << "*****\n";*/
-                    
-                }
-            }
-            for(string& factObj : possiblePredicateSatisfiers)
-            {
-                currentParamAssignments[paramBack].push_back(factObj);
-                
-            }
-            
-        }
-        else if(!currentParamAssignments.count(paramFront)) //constant $B
-        {
-            
-        }
-      
-        
-    }
-    
-    /*for(Param param : rule.ruleParams)
-    {
-        for(string assignment : currentParamAssignments[param.name])
-            cout << param.name << " " << assignment << endl;
-    }*/
-    for(string param : params)
-    {
-        for(string assignment : currentParamAssignments[param])
-            cout << param << " " << assignment << endl;
-    }
-   
-    
-    //cout << currentParamAssignments["C"].back();
-    
-}
-
-
-
-
-
-
-
-
-
-std::vector<std::string> tokenize(std::string& s, bool isRule)
+void SRI::dropRule(string rule)
 {
-    std::vector<std::string> parsedString;
-    
-    char nextChar;
-    std::string st;
-    int i = 0;
-    
-    while(i < s.length())
-    {
-        nextChar = s[i++];
-        if(nextChar == ' ' )
-            continue; //ignore whitespace
-        
-        else if( isRule && nextChar == '(') //when parsing rules, parantheses are considered in a different way
-        {
-            while(nextChar != ')')
-                nextChar = s[i++]; //will add more later to consider variables preceded by $, for now
-        }
-        
-        
-        if(nextChar == ',' || nextChar == '(' || nextChar == ')' || nextChar == ':' || nextChar == '-')
-        {
-            if (!st.length()) //do not add blank strings
-                continue;
-            parsedString.push_back(st);
-            st.erase(); //reset st so we can get next parsed element
-            continue;
-        }
-        st += nextChar;
-        
-        
-    }
-    
-    return parsedString;
+    rulebase.dropRule(rule);
+}
+
+vector<pair<string, string>> SRI::queryRule(string _rule, string start, string end) {
+    vector<pair<string, string>> ret;
+    if(!knowledgebase.knowledge_dict.count(_rule)) {
+        unordered_set<string> visited;
+        Rule rule = rulebase.getRule(_rule);
+        ret = queryRuleHelper(rule, rule.startEnd.first, rule.startEnd.second, visited, start, end);
+    } else
+        ret = knowledgebase.queryRelation(_rule, start, end);
+    return ret;
 }
 
 
 
 
-/*void SRI::load(const string& path)
+
+
+
+
+void SRI::parseInput(string input)
+{
+
+
+    std::stringstream stream(input);
+
+    std::string command;
+    stream >> command;
+    if(command == "LOAD")
+    {
+        std::string fileName;
+        std::string factDefParts; //in case there is whitespace between params in definition of fact
+        while(stream >> factDefParts)
+        {
+            fileName.append(factDefParts);
+        }
+    
+        load(fileName);
+    
+    }
+    else if(command == "DUMP")
+    {
+    
+    
+        std::string fileName;
+        std::string factDefParts; //in case there is whitespace between params in definition of fact
+        while(stream >> factDefParts)
+        {
+            fileName.append(factDefParts);
+        }
+    
+    
+        if(fileName != "")
+            dump(fileName);
+        else
+            dump(); //default to out.sri
+            
+    }
+    else if(command == "FACT")
+    {
+        std::string factDef;
+        std::string factDefParts; //in case there is whitespace between params in definition of fact
+        while(stream >> factDefParts)
+        {
+            factDef.append(factDefParts);
+        }
+        std::vector<std::string> factInfo = InputParser::tokenize(factDef); //tokenize with FACT call, only use string as a paramater
+
+    
+        insertFact(factInfo[0], factInfo[1], factInfo[2]);
+    }
+    else if(command == "RULE")
+    {
+        std::string ruleDef;
+        std::string ruleDefParts; //in case there is whitespace between params in definition of fact
+    
+        std::string logicalRelation; //AND or OR
+    
+        while(stream >> ruleDefParts)
+        {
+            if(ruleDefParts == "AND" || ruleDefParts == "OR")
+            {
+                logicalRelation = ruleDefParts;
+                continue;
+            }
+            ruleDef.append(ruleDefParts);
+        }
+    
+        bool logOp;
+        if(logicalRelation == "AND")
+            logOp = true; //used for paramater isAND in insertRule()
+        else if(logicalRelation == "OR")
+            logOp = false;
+        else
+        {
+            cout << "Invalid logical relation. Must be AND/OR. Rule not loaded from file" << endl;
+            return;
+        }
+        
+        parseAndInsertRule(ruleDef,logOp);
+        
+        }
+    else if(command == "DROP")
+    {
+        std::string ruleOrFact;
+        std::string factDefParts; //in case there is whitespace between params in definition of fact
+        while(stream >> factDefParts)
+        {
+            ruleOrFact.append(factDefParts);
+        }
+        
+        if(InputParser::isRule(ruleOrFact))
+            dropRule(ruleOrFact);
+        else
+        {
+            std::vector<std::string> factInfo = InputParser::tokenize(ruleOrFact);
+            dropFact(factInfo[0], factInfo[1], factInfo[2]);
+        }
+    }
+    
+    else if(command == "INFERENCE")
+    {
+        std::string inferenceQuery;
+        std::string queryParts; //in case there is whitespace between params in definition of fact
+        while(stream >> queryParts)
+        {
+            inferenceQuery.append(queryParts);
+        }
+        
+        
+        std::vector<std::string> inferenceInfo = InputParser::tokenize(inferenceQuery); //tokenize with FACT call, only use string as a paramater
+        pair<string, string> varNames; //used in printing the results of the query
+        
+        for(string& part : inferenceInfo)
+        {
+            //cout << part << endl;
+            if(part[0] == '$')
+            {
+                if(part == inferenceInfo[1])
+                    varNames.first.append(&part[1]);
+                else
+                    varNames.second.append(&part[1]);
+                part = ""; //blank strings are considered parameters in queryRule, so adjust we these strings accordingly here
+            }
+        }
+        
+        auto queryResults = queryRule(inferenceInfo[0], inferenceInfo[1], inferenceInfo[2]);
+        
+        
+        
+        
+        InputParser::printPair(queryResults, varNames);
+        
+        if(inferenceInfo.size() == 4) //declaring new facts based on result of inference
+        {
+            cout << "inserting fact based on query" << endl;
+            for(auto& result: queryResults)
+                insertFact( inferenceInfo[3], result.first, result.second);
+        }
+        
+    }
+    else
+    {
+        cout << "Unknown command. All commands must be in all caps\n";
+    }
+
+
+}
+
+
+void SRI::parseAndInsertRule(string ruleDef, bool logOp)
+{
+ 
+    unordered_map<string, pair<string, string>> factParams;
+    std::vector<std::string> ruleInfo = InputParser::tokenize(ruleDef, factParams);//call with map as second arg, use overloaded version for parsing a rule
+    
+    vector<pair<string, pair<string, string>>> rulePredicates;
+    string ruleName = ruleInfo[0];
+    pair<string, string> ruleParams;
+    ruleParams.first = factParams[ruleName].first; //insert X as an int from $X
+    ruleParams.second = factParams[ruleName].second;
+    
+    
+    for(int i = 1; i < ruleInfo.size(); i++)
+    {
+        string factName = ruleInfo[i];
+        pair<string, string> factPreds = factParams[factName];
+        
+        pair<string, pair<string, string>> factPredPair;
+        factPredPair.first = factName;
+        factPredPair.second = factPreds;
+        
+        rulePredicates.push_back(factPredPair);
+        
+    }
+    
+
+    
+    insertRule(ruleName, ruleParams, logOp, rulePredicates);
+
+}
+
+
+void SRI::load(const string& path)
 {
     std::ifstream file;
     file.open(path);
@@ -212,7 +309,6 @@ std::vector<std::string> tokenize(std::string& s, bool isRule)
     while(std::getline(file, currentLine)) //read next line from file into string currentLine unil EOF
     {
         std::stringstream stream(currentLine);
-        //s.insertFact("Father", "Mark", "Greg");
         
         std::string type;
         stream >> type;
@@ -224,11 +320,7 @@ std::vector<std::string> tokenize(std::string& s, bool isRule)
             {
                 factDef.append(factDefParts);
             }
-           // std::cout << "FactDef: " << factDef << std::endl;
-            std::vector<std::string> factInfo = tokenize(factDef, false); //second param is isRule
-            //for(std::string param : factInfo)
-              //  std::cout << param << " ";
-            std::cout << "\n";
+            std::vector<std::string> factInfo = InputParser::tokenize(factDef); //tokenize with FACT call, only use one string as a parameter
             
             insertFact(factInfo[0], factInfo[1], factInfo[2]);
             
@@ -249,43 +341,28 @@ std::vector<std::string> tokenize(std::string& s, bool isRule)
                 }
                 ruleDef.append(ruleDefParts);
             }
-    
             
+            bool logOp;
             if(logicalRelation == "AND")
-            {
-                list<string> rule;
-                for(int i = 1; i < ruleInfo.size(); i++)
-                {
-                    rule.push_back(ruleInfo[i]);
-                }
-                
-                insertRule(ruleInfo[0], {rule});    // When AND, the vector will only contain one rule
-            }
+                logOp = true; //used for paramater isAND in insertRule()
             else if(logicalRelation == "OR")
-            {
-                std::vector<list<string>> rules;
-                for(int i = 1; i < ruleInfo.size(); i++)
-                {
-                    list<string>rule;
-                    rule.push_back(ruleInfo[i]);
-                    rules.push_back(rule);
-
-                }
-                insertRule(ruleInfo[0], rules); // When OR, the vector will contain multiple lists of rules
-                //s.insertRule("Parent", {{"Father"}, {"Mother"}});   // Parent is OR, two list
-            }
+                logOp = false;
             else
             {
                 cout << "Invalid logical relation. Must be AND/OR. Rule not loaded from file" << endl;
+                continue;
             }
             
             
+            parseAndInsertRule(ruleDef,logOp);
+            
         }
-        
-        
-        
     }
-}*/
+}
+
+            
+
+    
 
 void SRI::dump(const string& path) //defaults to out.txt
 {
@@ -293,7 +370,7 @@ void SRI::dump(const string& path) //defaults to out.txt
     std::ofstream outfile(path);
 
     knowledgebase.writeToFile(outfile);
-    //rulebase.writeToFile(outfile);
+    rulebase.writeToFile(outfile);
 
     
     outfile.close();
