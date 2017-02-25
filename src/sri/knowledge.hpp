@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <fstream>
 using namespace std;
 #endif /* knowledge_hpp */
 
@@ -31,8 +32,13 @@ class KnowledgeBase {
 public:
     unordered_map<string, int> knowledge_dict;
     unordered_map<string, FactNode> graph;		// store people and their relations
+
+    
+  
     void insertFact(string relation, string subject, string object);
     void dropFact(string relation, string subject, string object);
     void printGraph();
     vector<pair<string, string>> queryRelation(string _relation, string subject = "", string _object = "");
+    
+    void writeToFile(std::ofstream& outfile);
 };
