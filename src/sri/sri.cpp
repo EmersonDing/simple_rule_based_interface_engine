@@ -187,7 +187,7 @@ void SRI::parseInput(string input)
             logOp = false;
         else
         {
-            cout << "Invalid logical relation. Must be AND/OR. Rule not loaded from file" << endl;
+            cout << "Invalid logical relation. Must be AND/OR. Rule was not stored." << endl;
             return;
         }
         
@@ -255,7 +255,7 @@ void SRI::parseInput(string input)
     }
     else
     {
-        cout << "Unknown command. All commands must be in all caps\n";
+        cout << "Unknown command. All commands must be in all caps, and must be one of the following: LOAD, DUMP, FACT, RULE, INFERENCE, or DROP\n";
     }
 
 
@@ -301,7 +301,7 @@ void SRI::load(const string& path)
     file.open(path);
     if(!file.is_open())
     {
-        std::cout << "Failed to load from file " << path << std::endl;
+        std::cout << "Failed to load from file \'" << path << "\', consider checking the file name and/or extension." << std::endl;
         return;
     }
     
