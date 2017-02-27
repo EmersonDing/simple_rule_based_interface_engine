@@ -57,3 +57,16 @@ void KnowledgeBase::writeToFile(std::ofstream& outfile)
                 outfile << "FACT " << relation.first << "(" << subject.first << "," << object << ")" << endl;
 }
 
+void KnowledgeBase::dropInferenceFacts(string relation)
+{
+    vector<pair<string, string>> factsToDelete = queryRelation(relation);
+    for(pair<string,string> fact : factsToDelete)
+    {
+        dropFact(relation, fact.first, fact.second);
+    }
+    
+
+    
+    
+   }
+

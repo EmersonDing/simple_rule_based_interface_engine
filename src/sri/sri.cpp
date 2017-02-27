@@ -204,7 +204,14 @@ void SRI::parseInput(string input)
         }
         
         if(InputParser::isRule(ruleOrFact))
-            dropRule(ruleOrFact);
+        {
+            if(rulebase.isRule(ruleOrFact))
+                dropRule(ruleOrFact);
+            else
+            {
+                dropInferenceFacts(ruleOrFact); //this is used when deleting all facts declared from an inference, i.e GF facts declared after a Grandfather inference
+            }
+        }
         else
         {
             std::vector<std::string> factInfo = InputParser::tokenize(ruleOrFact);
@@ -240,17 +247,16 @@ void SRI::parseInput(string input)
         
         auto queryResults = queryRule(inferenceInfo[0], inferenceInfo[1], inferenceInfo[2]);
         
-        
-        
-        
-        InputParser::printPair(queryResults, varNames);
-        
         if(inferenceInfo.size() == 4) //declaring new facts based on result of inference
         {
             cout << "inserting fact based on query" << endl;
             for(auto& result: queryResults)
                 insertFact( inferenceInfo[3], result.first, result.second);
         }
+        else
+            InputParser::printPair(queryResults, varNames); //only print if facts aren't being declared based on inference
+        
+       
         
     }
     else
@@ -308,55 +314,8 @@ void SRI::load(const string& path)
     std::string currentLine;
     while(std::getline(file, currentLine)) //read next line from file into string currentLine unil EOF
     {
-        std::stringstream stream(currentLine);
+        parseInput(currentLine);
         
-        std::string type;
-        stream >> type;
-        if(type == "FACT")
-        {
-            std::string factDef;
-            std::string factDefParts; //in case there is whitespace between params in definition of fact
-            while(stream >> factDefParts)
-            {
-                factDef.append(factDefParts);
-            }
-            std::vector<std::string> factInfo = InputParser::tokenize(factDef); //tokenize with FACT call, only use one string as a parameter
-            
-            insertFact(factInfo[0], factInfo[1], factInfo[2]);
-            
-        }
-        else if(type == "RULE")
-        {
-            std::string ruleDef;
-            std::string ruleDefParts; //in case there is whitespace between params in definition of fact
-            
-            std::string logicalRelation; //AND or OR
-            
-            while(stream >> ruleDefParts)
-            {
-                if(ruleDefParts == "AND" || ruleDefParts == "OR")
-                {
-                    logicalRelation = ruleDefParts;
-                    continue;
-                }
-                ruleDef.append(ruleDefParts);
-            }
-            
-            bool logOp;
-            if(logicalRelation == "AND")
-                logOp = true; //used for paramater isAND in insertRule()
-            else if(logicalRelation == "OR")
-                logOp = false;
-            else
-            {
-                cout << "Invalid logical relation. Must be AND/OR. Rule not loaded from file" << endl;
-                continue;
-            }
-            
-            
-            parseAndInsertRule(ruleDef,logOp);
-            
-        }
     }
 }
 
@@ -376,6 +335,10 @@ void SRI::dump(const string& path) //defaults to out.txt
     outfile.close();
 }
 
+void SRI::dropInferenceFacts(string facts)
+{
+    knowledgebase.dropInferenceFacts(facts);
+}
 
 
 

@@ -41,4 +41,6 @@ public:
     vector<pair<string, string>> queryRelation(string _relation, string subject = "", string _object = "");
     
     void writeToFile(std::ofstream& outfile);
+    
+    void dropInferenceFacts(string facts);
 };

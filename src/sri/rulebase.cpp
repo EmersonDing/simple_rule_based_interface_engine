@@ -8,7 +8,7 @@
 #include "rulebase.hpp"
 void RuleBase::insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params) {
     if(rules.count(name)) {
-        cout << "rule exists" << endl;
+        cout << "rule " << name << " already exists" << endl;
         return ;
     }
     Rule rule(name, isAnd, startEnd, params);
@@ -67,5 +67,8 @@ void RuleBase::writeToFile(ofstream& outfile)
     }
 }
 
-
+bool RuleBase::isRule(string rule)
+{
+    return rules.count(rule);
+}
 

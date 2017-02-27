@@ -2,8 +2,6 @@
 //  InputParser.hpp
 //  SRI
 //
-//  Created by Austin Baird on 2/23/17.
-//  Copyright © 2017 Austin Baird. All rights reserved.
 //
 
 #ifndef InputParser_hpp

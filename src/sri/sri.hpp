@@ -57,5 +57,7 @@ public:
     void dropRule(string rule);
     
     void queryRule(string _rule);
+    
+    void dropInferenceFacts(string facts);
 };
 

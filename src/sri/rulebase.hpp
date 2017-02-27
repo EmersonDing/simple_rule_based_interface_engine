@@ -34,7 +34,7 @@ struct Rule {
         // TODO
     }
     
-    Rule(string _name, bool _isAnd, pair<string, string> _startEnd, vector<pair<string, pair<string, string>>> _params): name(_name), isAnd(_isAnd), startEnd(_startEnd) {
+    Rule(string _name, bool _isAnd, pair<string, string> _startEnd, vector<pair<string, pair<string, string>>> _params):  isAnd(_isAnd), name(_name), startEnd(_startEnd) {
         insertRuleGraph(_params);
     }
     
@@ -54,6 +54,8 @@ public:
     Rule getRule(string rule);
     void printRules();
     void writeToFile(ofstream& outfile);
+    
+    bool isRule(string rule);
 };
 
 

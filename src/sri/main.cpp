@@ -29,7 +29,14 @@ int main(int argc, const char * argv[]) {
     
     while(input != "q" && input != "Q")
     {
-        s.parseInput(input);
+        try
+        {
+            s.parseInput(input);
+        }
+        catch(...)
+        {
+            cerr << "Input was invalid\n";
+        }
         printf("Enter an SRI comand, or (Q)uit : ");
         getline(cin, input);
         

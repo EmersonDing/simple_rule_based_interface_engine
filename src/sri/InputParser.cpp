@@ -2,8 +2,6 @@
 //  InputParser.cpp
 //  SRI
 //
-//  Created by Austin Baird on 2/23/17.
-//  Copyright © 2017 Austin Baird. All rights reserved.
 //
 
 #include "InputParser.hpp"
@@ -140,6 +138,13 @@ void InputParser::printPair(vector<pair<string, string>> v, std::pair<string, st
     if(varNames.second != "")
         varNames.second.append(":");
     
-    for(auto& r: v)
+    for(auto r: v)
+    {
+        if(varNames.first[1] != ':')
+            r.first = "";
+        if(varNames.second[1] != ':')
+            r.second = "";
+            
         cout << varNames.first  << r.first << '\t' << varNames.second  << r.second << endl;
+    }
 }
