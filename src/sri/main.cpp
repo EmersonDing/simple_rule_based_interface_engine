@@ -1,10 +1,10 @@
-//
-//  main.cpp
-//  sri
-//
-//  Created by Emerson on 2/14/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ main.cpp
+ Group 9
+ This program will keep polling for input from the user and pass this input to its SRI to handle until the user 
+ decides to quit. The user MUST dump the contents of the SRI in order for the rules and facts from their session to be 
+ saved
+ */
 
 #include <iostream>
 #include <vector>
@@ -27,7 +27,7 @@ int main(int argc, const char * argv[]) {
     getline(cin, input);
 
     
-    while(input != "q" && input != "Q")
+    while(input != "q" && input != "Q") //poll input until user is ready to quit
     {
         try
         {

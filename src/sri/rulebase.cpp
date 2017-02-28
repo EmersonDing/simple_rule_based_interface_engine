@@ -1,10 +1,7 @@
-//
-//  rulebase.cpp
-//  sri
-//
-//  Created by Emerson on 2/15/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ Rulebase.cpp
+ Group 9
+ */
 #include "rulebase.hpp"
 void RuleBase::insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params) {
     if(rules.count(name)) {
@@ -38,6 +35,7 @@ void RuleBase::dropRule(string rule) {
 
 void RuleBase::writeToFile(ofstream& outfile)
 {
+    //write rules in the format specified by the project description 
     for(auto& rule: rules)
     {
         Rule r = rule.second;

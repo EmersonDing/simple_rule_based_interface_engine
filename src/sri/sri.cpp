@@ -1,10 +1,7 @@
-//
-//  sri.cpp
-//  sri
-//
-//  Created by Emerson on 2/15/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ sri.cpp
+ Group 9
+ */
 
 #include "sri.hpp"
 vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, string end, unordered_set<string>& visited, string s, string e) {
@@ -277,7 +274,7 @@ void SRI::parseAndInsertRule(string ruleDef, bool logOp)
     vector<pair<string, pair<string, string>>> rulePredicates;
     string ruleName = ruleInfo[0];
     pair<string, string> ruleParams;
-    ruleParams.first = factParams[ruleName].first; //insert X as an int from $X
+    ruleParams.first = factParams[ruleName].first; //insert only the var name X from $X
     ruleParams.second = factParams[ruleName].second;
     
     

@@ -1,6 +1,6 @@
 //
 //  InputParser.cpp
-//  SRI
+//  Group 9
 //
 //
 

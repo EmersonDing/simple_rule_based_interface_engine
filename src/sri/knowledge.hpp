@@ -1,10 +1,10 @@
-//
-//  knowledge.hpp
-//  sri
-//
-//  Created by Emerson on 2/15/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ knowledge.hpp
+ Group 9
+ This class is used ot model a KnowledgeBase. It will contain all the facts used by the SRI. Facts are stored as a 
+ graph, where each node consists of the name of a parent node's relation and a set of the names it is related to by
+ this relation.
+ */
 
 #ifndef knowledge_hpp
 #define knowledge_hpp
@@ -42,5 +42,5 @@ public:
     
     void writeToFile(std::ofstream& outfile);
     
-    void dropInferenceFacts(string facts);
+    void dropInferenceFacts(string facts); //used to delete facts created as the result of an inference
 };

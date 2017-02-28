@@ -1,10 +1,9 @@
-//
-//  sri.hpp
-//  sri
-//
-//  Created by Emerson on 2/15/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ sri.hpp
+ Group 9
+ This class is used to model an SRI and handles all command line input. It contains a rule and knowledgebase which
+ are used to make inferences.It also uses InputParser.hpp to help simplify the logic of parsing strings 
+ */
 
 #ifndef sri_hpp
 #define sri_hpp
@@ -42,7 +41,7 @@ class SRI {
     RuleBase rulebase;
 public:
     
-    void parseAndInsertRule(string rule, bool logOp);
+    void parseAndInsertRule(string rule, bool logOp); //used to simplify code when parsing input and inserting
     
     void parseInput(string input);		// parse input string
     vector<pair<string, string>> queryRule(string _rule, string start = "", string end = "");
@@ -58,6 +57,6 @@ public:
     
     void queryRule(string _rule);
     
-    void dropInferenceFacts(string facts);
+    void dropInferenceFacts(string facts); //used to drop facts created as the result of an inference
 };
 

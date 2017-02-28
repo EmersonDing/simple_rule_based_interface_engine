@@ -1,10 +1,7 @@
-//
-//  knowledge.cpp
-//  sri
-//
-//  Created by Emerson on 2/15/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ knowledge.hpp
+ Group 9
+ */
 
 #include "knowledge.hpp"
 void KnowledgeBase::insertFact(string relation, string subject, string object) {
@@ -51,6 +48,7 @@ vector<pair<string, string>> KnowledgeBase::queryRelation(string _relation, stri
 
 void KnowledgeBase::writeToFile(std::ofstream& outfile)
 {
+    //write facts to file in the format specified by the project description
     for(auto& subject: graph)
         for(auto& relation: subject.second.relation)
             for(auto& object: relation.second)
@@ -68,5 +66,5 @@ void KnowledgeBase::dropInferenceFacts(string relation)
 
     
     
-   }
+}
 

@@ -1,8 +1,10 @@
-//
-//  InputParser.hpp
-//  SRI
-//
-//
+/*
+ InputParser.hpp
+ Group 9
+ This class is intended to be used only as a utility class, since all of its methods are static. It is used to
+ simplify code in SRI for parsing strings and returning the input in a format that can be used by the rule or
+ knowledge base
+*/
 
 #ifndef InputParser_hpp
 #define InputParser_hpp
@@ -29,8 +31,8 @@ public:
     //void parseInput(string input);
     static void printPair(vector<pair<string, string>> v, pair<string, string> varNames);
     
-    static vector<string> tokenize(string& s, unordered_map<string, pair<string, string>>& factParams);
-    static vector<string> tokenize(string& s);
+    static vector<string> tokenize(string& s, unordered_map<string, pair<string, string>>& factParams); //overloaded to parse input for a RULE 
+    static vector<string> tokenize(string& s); //overloaded to parse input for a FACT
     static bool isRule(string FactOrRule);
 };
 

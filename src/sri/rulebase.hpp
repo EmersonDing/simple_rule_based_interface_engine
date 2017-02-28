@@ -1,10 +1,9 @@
-//
-//  rulebase.hpp
-//  sri
-//
-//  Created by Emerson on 2/15/17.
-//  Copyright © 2017 Emerson. All rights reserved.
-//
+/*
+ RuleBase.hpp
+ Group 9
+ This class is used to model a RuleBase. All predicates in the rules will have a pair of parameters, that is, it only 
+ handles rules and facts with exactly two paramaters, but rules can have any number ot predicates.
+ */
 #ifndef rulebase_hpp
 #define rulebase_hpp
 
@@ -49,13 +48,13 @@ struct Rule {
 class RuleBase {
 public:
     unordered_map<string, Rule> rules;
-    void insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params);   // if a new rule is relied on another rule, replace input list with that rule. TODO
+    void insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params);   // if a new rule is relied on another rule, replace input list with that rule. 
     void dropRule(string rule);
     Rule getRule(string rule);
     void printRules();
     void writeToFile(ofstream& outfile);
     
-    bool isRule(string rule);
+    bool isRule(string rule); //used to detect if a relation is a rule or not
 };
 
 
