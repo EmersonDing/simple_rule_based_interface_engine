@@ -28,6 +28,7 @@ int main(int argc, const char * argv[]) {
     s.insertFact("Mother", "Marry", "Stanley");
     s.insertFact("Father", "Stanley", "Lucy");
     s.insertFact("Mother", "Jane", "Mark");
+    s.insertFact("Father", "Greg", "David");
     
     // drop facts
 //    s.dropFact("Mother", "Marry", "Stanley");
@@ -45,20 +46,20 @@ int main(int argc, const char * argv[]) {
 
     
     // query rules
-    printPair(s.queryRule("Father"));   // all father fact
-    cout << "****" << endl;
-    printPair(s.queryRule("Father", "Mark"));   // Father: "Mark", "$"
-    cout << "****" << endl;
-    printPair(s.queryRule("Father", "", "Greg"));   // Father: "$", "Greg"
-    cout << "****" << endl;
-    printPair(s.queryRule("Parent"));   // Parent: "$", "$"
-    cout << "****" << endl;
-    printPair(s.queryRule("Parent", "John"));   // Parent: "$", "John"
-    cout << "****" << endl;
-    printPair(s.queryRule("GrandParent"));  // GrandParent: "$", "$"
-    cout << "****" << endl;
-    printPair(s.queryRule("GrandParent", "John"));  // GrandParent: "$", "John"
-    cout << "****" << endl;
+//    printPair(s.queryRule("Father"));   // all father fact
+//    cout << "****" << endl;
+//    printPair(s.queryRule("Father", "Mark"));   // Father: "Mark", "$"
+//    cout << "****" << endl;
+//    printPair(s.queryRule("Father", "", "Greg"));   // Father: "$", "Greg"
+//    cout << "****" << endl;
+//    printPair(s.queryRule("Parent"));   // Parent: "$", "$"
+//    cout << "****" << endl;
+//    printPair(s.queryRule("Parent", "John"));   // Parent: "$", "John"
+//    cout << "****" << endl;
+//    printPair(s.queryRule("GrandParent"));  // GrandParent: "$", "$"
+//    cout << "****" << endl;
+//    printPair(s.queryRule("GrandParent", "John"));  // GrandParent: "$", "John"
+//    cout << "****" << endl;
     printPair(s.queryRule("GrandGrandFather", "John")); // GrandGrandFather: "$", "John"
     cout << "****" << endl;
     
