@@ -4,6 +4,7 @@ FACT Mother(Marry,Stanley)
 FACT Father(John,Mark)
 FACT Father(Mark,Stanley)
 FACT Father(Mark,Greg)
-RULE GrandGrandFather($X,$Y):- OR Father($X,$Z) GrandParent($Z,$Y) G
 RULE Parent($X,$Y):- OR Father($X,$Y) Mother($X,$Y) 
-RULE Grandfather($X,$Y):- AND Father($X,$Z) Father($Z,$Y) 
+RULE GrandParent($X,$Y):- And Parent($X,$Z) Parent($Z,$Y) 
+RULE GrandGrandFather($X,$Y):- OR Father($X,$Z) GrandParent($Z,$Y) G
+RULE GrandFather($X,$Y):- AND Father($X,$Z) Father($Z,$Y) 
