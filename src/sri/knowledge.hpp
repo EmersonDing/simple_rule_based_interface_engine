@@ -22,15 +22,15 @@ using namespace std;
 
 class FactNode {
 public:
-    // all relations of a people
-    // e.g. {{"Father", {Peter"}}, {"Brother", {"John"}}}
+    // save relations of a people.
+    // e.g. {{"Father", {Peter"}}, {"Brother", {"John"}}} in Mark's relation
     // means Father(Mark,Peter), Brother(Mark,John)
     unordered_map<string, unordered_set<string>> relation;
 };
 
 class KnowledgeBase {
 public:
-    unordered_map<string, int> knowledge_dict;
+    unordered_map<string, int> knowledge_dict;  // store name of all facts
     unordered_map<string, FactNode> graph;		// store people and their relations
 
     

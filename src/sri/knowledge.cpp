@@ -13,6 +13,7 @@ void KnowledgeBase::insertFact(string relation, string subject, string object) {
     graph[subject].relation[relation].insert(object);
     ++knowledge_dict[relation];
 }
+
 void KnowledgeBase::dropFact(string relation, string subject, string object) {
     if(!graph.count(subject) || !graph[subject].relation.count(relation) || !graph[subject].relation[relation].count(object)) {
         cout << "no such relationship." << endl;
@@ -22,6 +23,7 @@ void KnowledgeBase::dropFact(string relation, string subject, string object) {
     if(--knowledge_dict[relation] == 0)
         knowledge_dict.erase(relation);
 }
+
 void KnowledgeBase::printGraph() {
     for(auto& subject: graph)
         for(auto& relation: subject.second.relation)

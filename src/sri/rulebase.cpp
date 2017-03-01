@@ -8,8 +8,8 @@ void RuleBase::insertRule(string name, pair<string, string> startEnd, bool isAnd
         cout << "rule " << name << " already exists" << endl;
         return ;
     }
-    Rule rule(name, isAnd, startEnd, params);
-    rules[name] = rule;
+    Rule rule(name, isAnd, startEnd, params);   // create new Rule
+    rules[name] = rule;     // save rule in unordered_map rules with "name" as key
 }
 
 Rule RuleBase::getRule(string rule) {

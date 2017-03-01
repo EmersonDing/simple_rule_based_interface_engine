@@ -21,16 +21,16 @@ using namespace std;
 struct Rule {
     bool isAnd;
     string name;
-    pair<string, string> startEnd; // params for rule. not necessary,
-    unordered_map<string, vector<pair<string, string>>> ruleGraph;   // {"X":{"Father", "Y"}}
+    pair<string, string> startEnd; // start and end node of rule. e.g. for Grandpa("$X","$Y"), start node is "$X", end is "$Y". FYI, node name is just used to differentiate the node name inside the rule, which means even start node is "$X" for current rule, user can still query Grandpa("$G", "$Z");
+    unordered_map<string, vector<pair<string, string>>> ruleGraph;   // format: {"$X":{"Father", "$Y"}}. for $X node, there's neighbor $Y with relation "Father". $X and $Y can have multiple relations with each other.
     
+    // insert rule
     void insertRuleGraph(vector<pair<string, pair<string, string>>> params) {
         for(auto row: params)
             ruleGraph[row.second.first].push_back({row.first, row.second.second});
     }
     
     Rule() {
-        // TODO
     }
     
     Rule(string _name, bool _isAnd, pair<string, string> _startEnd, vector<pair<string, pair<string, string>>> _params):  isAnd(_isAnd), name(_name), startEnd(_startEnd) {
@@ -48,13 +48,12 @@ struct Rule {
 class RuleBase {
 public:
     unordered_map<string, Rule> rules;
-    void insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params);   // if a new rule is relied on another rule, replace input list with that rule. 
+    void insertRule(string name, pair<string, string> startEnd, bool isAnd, vector<pair<string, pair<string, string>>> params);
     void dropRule(string rule);
     Rule getRule(string rule);
     void printRules();
     void writeToFile(ofstream& outfile);
-    
-    bool isRule(string rule); //used to detect if a relation is a rule or not
+    bool isRule(string rule); //used to detect if a input is a rule or a fact
 };
 
 
