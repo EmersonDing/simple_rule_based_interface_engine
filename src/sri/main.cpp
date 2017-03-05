@@ -21,27 +21,8 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     SRI s;
     
-    
-    string input;
-    printf("Enter an SRI comand, or (Q)uit : ");
-    getline(cin, input);
-
-    
-    while(input != "q" && input != "Q") //poll input until user is ready to quit
-    {
-        try
-        {
-            s.parseInput(input);
-        }
-        catch(...)
-        {
-            cerr << "Input was invalid\n";
-        }
-        printf("Enter an SRI comand, or (Q)uit : ");
-        getline(cin, input);
-        
-    }
-    
+    s.insertFact("Father", "$X", "$Y");
+    s.printGraph();
 
     
     return 0;
