@@ -17,32 +17,58 @@
 
 using namespace std;
 
+template <typename T>
+void printPair(vector<pair<T, T>> p) {
+    for(auto& line: p)
+        cout << line.first << '\t' << line.second << endl;
+}
+
+
 
 int main(int argc, const char * argv[]) {
+    
     SRI s;
+    // insert facts
+    s.insertFact("Father", "Mark", "Greg");
+    s.insertFact("Father", "Mark", "Stanley");
+    s.insertFact("Father", "John", "Mark");
+    s.insertFact("Mother", "Marry", "Stanley");
+    s.insertFact("Father", "Stanley", "Lucy");
+    s.insertFact("Mother", "Jane", "Mark");
+    s.insertFact("Father", "Greg", "David");
+    
+    // drop facts
+    //    s.dropFact("Mother", "Marry", "Stanley");
+    
+    // print facts
+    //    s.printGraph();
+    //    cout << "****" << endl << endl;
+    
+    // insert rules
+    s.insertRule("Grandfather", {"X", "Y"}, true, {{"Father", {"X", "Z"}}, {"Father", {"Z", "Y"}}});
+    s.insertRule("Parent", {"X", "Y"}, false, {{"Father", {"X", "Y"}}, {"Mother", {"X", "Y"}}});
+    s.insertRule("GrandParent", {"X", "Y"}, true, {{"Parent", {"X", "Z"}}, {"Parent", {"Z", "Y"}}});
+    s.insertRule("GrandGrandFather", {"X", "Y"}, false, {{"Father", {"X", "Z"}}, {"GrandParent", {"Z", "Y"}}});
+    //    s.printRule();
     
     
-    string input;
-    printf("Enter an SRI comand, or (Q)uit : ");
-    getline(cin, input);
+    // query rules
+    //    printPair(s.queryRule("Father"));   // all father fact
+    //    cout << "****" << endl;
+    //    printPair(s.queryRule("Father", "Mark"));   // Father: "Mark", "$"
+    //    cout << "****" << endl;
+    //    printPair(s.queryRule("Father", "", "Greg"));   // Father: "$", "Greg"
+    //    cout << "****" << endl;
+    //    printPair(s.queryRule("Parent"));   // Parent: "$", "$"
+    //    cout << "****" << endl;
+    //    printPair(s.queryRule("Parent", "John"));   // Parent: "$", "John"
+    //    cout << "****" << endl;
+    //    printPair(s.queryRule("GrandParent"));  // GrandParent: "$", "$"
+    //    cout << "****" << endl;
+    //    printPair(s.queryRule("GrandParent", "John"));  // GrandParent: "$", "John"
+    //    cout << "****" << endl;
+    printPair<string>(s.queryRule("GrandGrandFather", "John")); // GrandGrandFather: "$", "John"
+    cout << "****" << endl;
 
-    
-    while(input != "q" && input != "Q") //poll input until user is ready to quit
-    {
-        try
-        {
-            s.parseInput(input);
-        }
-        catch(...)
-        {
-            cerr << "Input was invalid\n";
-        }
-        printf("Enter an SRI comand, or (Q)uit : ");
-        getline(cin, input);
-        
-    }
-    
-
-    
     return 0;
 }

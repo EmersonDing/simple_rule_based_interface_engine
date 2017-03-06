@@ -20,7 +20,7 @@ vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, strin
     bool isFirstEdge = false;   // for "AND" relationship, all results from different neighbors will be merged and only result exist in all neighbor result will be left. first neighbor will be a special case
     visited.insert(start);  // changed visited
     unordered_set<string> dict; // temperarily save result from different neighbor and used to erase result not following "AND" and "OR" rule
-    // traverse the nrighbors
+    // traverse the neighbors
     for(auto& edge: rule.ruleGraph[start]) {
         string relation = edge.first;   // rule/fact name
         vector<pair<string, string>> r; // temp variable to get result from next level of dfs
