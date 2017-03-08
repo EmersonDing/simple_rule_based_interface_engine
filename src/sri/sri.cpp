@@ -5,7 +5,7 @@
 
 #include "sri.hpp"
 
-void SRI::querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited) {
+void SRI::querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited, mutex& lock) {
     string relation = edge.first;   // rule/fact name
     vector<pair<string, string>> r; // temp variable to get result from next level of dfs
     vector<pair<string, string>> _row;  // temp variable to merge result from all levels of dfs
@@ -25,6 +25,8 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
         }
     else
         _row = r;
+//    unique_lock<mutex> ul(lock);    // set lock. protect "dict"
+    lock_guard<mutex> guard(lock);
     if(!isFirstEdge || !rule.isAnd) {   // if is OR or first neighbor, directly insert _row into dict
         isFirstEdge = true;
         for(auto& _r: _row)
@@ -44,7 +46,7 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
         }
         dict = dict_temp;
     }
-
+//    ul.unlock();    // manually unlock
 }
 
 /*
@@ -64,10 +66,11 @@ vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, strin
     visited.insert(start);  // changed visited
     unordered_set<string> dict; // temperarily save result from different neighbor and used to erase result not following "AND" and "OR" rule
     // traverse the neighbors
+    mutex lock;     // lock for querys in current level, to lock "dict"
     for(auto& edge: rule.ruleGraph[start]) {
-        threads.push_back(thread(&SRI::querySingleRule, this, ref(edge), ref(s), ref(e), ref(start), ref(end), ref(rule), ref(isFirstEdge), ref(dict), ref(visited)));
+        threads.push_back(thread(&SRI::querySingleRule, this, ref(edge), ref(s), ref(e), ref(start), ref(end), ref(rule), ref(isFirstEdge), ref(dict), ref(visited), ref(lock)));
     }
-    for(auto& t: threads)
+    for(auto& t: threads)   // join threads
         t.join();
     for(auto& str: dict) {
         string str1 = str.substr(0, str.find(' ')), // head of a result relation
