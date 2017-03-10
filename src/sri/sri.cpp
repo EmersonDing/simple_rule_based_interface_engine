@@ -5,6 +5,55 @@
 
 #include "sri.hpp"
 
+void SRI::querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited, mutex& lock_dict) {
+    thread::id thread_id = this_thread::get_id();   // get thread id
+    unique_lock<mutex> lk_print(lock_print);        // mutex lock_print
+    cout << "thread " << thread_id << " start" << endl;      // print thread start
+    lk_print.unlock();                              // unlock
+    string relation = edge.first;   // rule/fact name
+    vector<pair<string, string>> r; // temp variable to get result from next level of dfs
+    vector<pair<string, string>> _row;  // temp variable to merge result from all levels of dfs
+    if(knowledgebase.knowledge_dict.count(relation)) {
+        r = knowledgebase.queryRelation(relation, s, e);
+    }
+    else {
+        r = queryRule(relation, s, e);
+    }
+    if(edge.second != end)
+        for(auto& _r: r) { // use dfs to query result of all of the relationships from current level
+            auto t = queryRuleHelper(rule, edge.second, end, visited, _r.second, e);
+            for(auto& _t: t)
+                if(s == "") _t.first = _r.first;
+                else _t.first = s;
+            _row.insert(_row.end(), t.begin(), t.end());
+        }
+    else
+        _row = r;
+    lock_guard<mutex> guard(lock_dict); // set lock. protect "dict"
+    if(!isFirstEdge || !rule.isAnd) {   // if is OR or first neighbor, directly insert _row into dict
+        isFirstEdge = true;
+        for(auto& _r: _row)
+            if(s == "")
+                dict.insert(_r.first + " " + _r.second);
+            else
+                dict.insert(s + " " + _r.second);
+    } else {    // if is AND, only insert into dict when result head edge is already in dict
+        unordered_set<string> dict_temp;
+        for(auto& _r: _row) {
+            string str;
+            if(s == "")
+                str = _r.first + " " + _r.second;
+            else
+                str = s + " " + _r.second;
+            if(dict.count(str)) dict_temp.insert(str);
+        }
+        dict = dict_temp;
+    }
+    lk_print.lock();                                       // mutex lock_print
+    cout << "thread " << thread_id << " end" << endl;      // print thread start
+    lk_print.unlock();                                     // unlock
+}
+
 /*
  * query result of a rule
  * rule - rule to query; start - start node of rule, e.g. $X; end - end node of rule
@@ -17,50 +66,17 @@ vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, strin
     if(visited.count(start))    // if already visited, return empty result
         return vector<pair<string, string>>();
     vector<pair<string, string>> ret;
+    vector<thread> threads;     // thread pool
     bool isFirstEdge = false;   // for "AND" relationship, all results from different neighbors will be merged and only result exist in all neighbor result will be left. first neighbor will be a special case
     visited.insert(start);  // changed visited
     unordered_set<string> dict; // temperarily save result from different neighbor and used to erase result not following "AND" and "OR" rule
-    // traverse the nrighbors
+    // traverse the neighbors
+    mutex lock_dict;     // lock for querys in current level, to lock "dict"
     for(auto& edge: rule.ruleGraph[start]) {
-        string relation = edge.first;   // rule/fact name
-        vector<pair<string, string>> r; // temp variable to get result from next level of dfs
-        vector<pair<string, string>> _row;  // temp variable to merge result from all levels of dfs
-        if(knowledgebase.knowledge_dict.count(relation)) {
-            r = knowledgebase.queryRelation(relation, s, e);
-        }
-        else {
-            r = queryRule(relation, s, e);
-        }
-        if(edge.second != end)
-            for(auto& _r: r) { // use dfs to query result of all of the relationships from current level
-                auto t = queryRuleHelper(rule, edge.second, end, visited, _r.second, e);
-                for(auto& _t: t)
-                    if(s == "") _t.first = _r.first;
-                    else _t.first = s;
-                _row.insert(_row.end(), t.begin(), t.end());
-            }
-        else
-            _row = r;
-        if(!isFirstEdge || !rule.isAnd) {   // if is OR or first neighbor, directly insert _row into dict
-            isFirstEdge = true;
-            for(auto& _r: _row)
-                if(s == "")
-                    dict.insert(_r.first + " " + _r.second);
-                else
-                    dict.insert(s + " " + _r.second);
-        } else {    // if is AND, only insert into dict when result head edge is already in dict
-            unordered_set<string> dict_temp;
-            for(auto& _r: _row) {
-                string str;
-                if(s == "")
-                    str = _r.first + " " + _r.second;
-                else
-                    str = s + " " + _r.second;
-                if(dict.count(str)) dict_temp.insert(str);
-            }
-            dict = dict_temp;
-        }
+        threads.push_back(thread(&SRI::querySingleRule, this, ref(edge), ref(s), ref(e), ref(start), ref(end), ref(rule), ref(isFirstEdge), ref(dict), ref(visited), ref(lock_dict)));
     }
+    for(auto& t: threads)   // join threads
+        t.join();
     for(auto& str: dict) {
         string str1 = str.substr(0, str.find(' ')), // head of a result relation
         str2 = str.substr(str.find(' ')+1);         // rear of a result relation

@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <thread>
 #include "knowledge.hpp"
 #include "rulebase.hpp"
 
@@ -37,8 +38,10 @@ class SRI {
    
     void parseStringOutput();		// parse output string
     vector<pair<string, string>> queryRuleHelper(Rule rule, string start, string end, unordered_set<string>& visited, string s, string e);
+    void querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited, mutex& lock_dict);
     KnowledgeBase knowledgebase;
     RuleBase rulebase;
+    mutex lock_print;   // printing lock
 public:
     
     void parseAndInsertRule(string rule, bool logOp); //used to simplify code when parsing input and inserting
@@ -54,8 +57,6 @@ public:
     void dropFact(string relation, string subject, string object);
     
     void dropRule(string rule);
-    
-    void queryRule(string _rule);
     
     void dropInferenceFacts(string facts); //used to drop facts created as the result of an inference
 };
