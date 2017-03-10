@@ -7,9 +7,9 @@
 
 void SRI::querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited, mutex& lock_dict) {
     thread::id thread_id = this_thread::get_id();   // get thread id
-    unique_lock<mutex> lk_print(lock_print);
+    unique_lock<mutex> lk_print(lock_print);        // mutex lock_print
     cout << "thread " << thread_id << " start" << endl;      // print thread start
-    lk_print.unlock();
+    lk_print.unlock();                              // unlock
     string relation = edge.first;   // rule/fact name
     vector<pair<string, string>> r; // temp variable to get result from next level of dfs
     vector<pair<string, string>> _row;  // temp variable to merge result from all levels of dfs
@@ -49,9 +49,9 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
         }
         dict = dict_temp;
     }
-    lk_print.lock();
+    lk_print.lock();                                       // mutex lock_print
     cout << "thread " << thread_id << " end" << endl;      // print thread start
-    lk_print.unlock();
+    lk_print.unlock();                                     // unlock
 }
 
 /*
