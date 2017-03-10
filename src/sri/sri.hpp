@@ -58,8 +58,6 @@ public:
     
     void dropRule(string rule);
     
-    void queryRule(string _rule);
-    
     void dropInferenceFacts(string facts); //used to drop facts created as the result of an inference
 };
 

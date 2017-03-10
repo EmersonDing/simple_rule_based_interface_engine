@@ -53,8 +53,9 @@ int main(int argc, const char * argv[]) {
     
     
     // query rules
-    //    printPair(s.queryRule("Father"));   // all father fact
-    //    cout << "****" << endl;
+        printPair<string>(s.queryRule("Father"));   // all father fact
+                                                    // when query fact, result will be directly pulled from knowledgebase. no multithreading needed
+        cout << "****" << endl;
     //    printPair(s.queryRule("Father", "Mark"));   // Father: "Mark", "$"
     //    cout << "****" << endl;
     //    printPair(s.queryRule("Father", "", "Greg"));   // Father: "$", "Greg"

@@ -29,7 +29,6 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
         }
     else
         _row = r;
-//    unique_lock<mutex> ul(lock_dict);
     lock_guard<mutex> guard(lock_dict); // set lock. protect "dict"
     if(!isFirstEdge || !rule.isAnd) {   // if is OR or first neighbor, directly insert _row into dict
         isFirstEdge = true;
@@ -53,7 +52,6 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
     lk_print.lock();
     cout << "thread " << thread_id << " end" << endl;      // print thread start
     lk_print.unlock();
-//    ul.unlock();    // manually unlock
 }
 
 /*
