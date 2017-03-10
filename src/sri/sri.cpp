@@ -5,7 +5,11 @@
 
 #include "sri.hpp"
 
-void SRI::querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited, mutex& lock) {
+void SRI::querySingleRule(const pair<string, string>& edge, const string& s, const string& e, const string& start, const string& end, const Rule& rule, bool isFirstEdge, unordered_set<string>& dict, unordered_set<string>& visited, mutex& lock_dict) {
+    thread::id thread_id = this_thread::get_id();   // get thread id
+    unique_lock<mutex> lk_print(lock_print);
+    cout << "thread " << thread_id << " start" << endl;      // print thread start
+    lk_print.unlock();
     string relation = edge.first;   // rule/fact name
     vector<pair<string, string>> r; // temp variable to get result from next level of dfs
     vector<pair<string, string>> _row;  // temp variable to merge result from all levels of dfs
@@ -25,8 +29,8 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
         }
     else
         _row = r;
-//    unique_lock<mutex> ul(lock);    // set lock. protect "dict"
-    lock_guard<mutex> guard(lock);
+//    unique_lock<mutex> ul(lock_dict);
+    lock_guard<mutex> guard(lock_dict); // set lock. protect "dict"
     if(!isFirstEdge || !rule.isAnd) {   // if is OR or first neighbor, directly insert _row into dict
         isFirstEdge = true;
         for(auto& _r: _row)
@@ -46,6 +50,9 @@ void SRI::querySingleRule(const pair<string, string>& edge, const string& s, con
         }
         dict = dict_temp;
     }
+    lk_print.lock();
+    cout << "thread " << thread_id << " end" << endl;      // print thread start
+    lk_print.unlock();
 //    ul.unlock();    // manually unlock
 }
 
@@ -66,9 +73,9 @@ vector<pair<string, string>> SRI::queryRuleHelper(Rule rule, string start, strin
     visited.insert(start);  // changed visited
     unordered_set<string> dict; // temperarily save result from different neighbor and used to erase result not following "AND" and "OR" rule
     // traverse the neighbors
-    mutex lock;     // lock for querys in current level, to lock "dict"
+    mutex lock_dict;     // lock for querys in current level, to lock "dict"
     for(auto& edge: rule.ruleGraph[start]) {
-        threads.push_back(thread(&SRI::querySingleRule, this, ref(edge), ref(s), ref(e), ref(start), ref(end), ref(rule), ref(isFirstEdge), ref(dict), ref(visited), ref(lock)));
+        threads.push_back(thread(&SRI::querySingleRule, this, ref(edge), ref(s), ref(e), ref(start), ref(end), ref(rule), ref(isFirstEdge), ref(dict), ref(visited), ref(lock_dict)));
     }
     for(auto& t: threads)   // join threads
         t.join();
