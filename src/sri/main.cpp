@@ -7,23 +7,42 @@
  */
 
 #include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <list>
+#include <cstring>
 #include "sri.hpp"
+#include "TCPServerSocket.h"
 
 
 
 using namespace std;
 
 
-int main(int argc, const char * argv[]) {
+int main() {
     SRI s;
-    
-    s.insertFact("Father", "$X", "$Y");
-    s.printGraph();
+    TCPServerSocket server(9999);
+    TCPSocket * client = server.getConnection();
+    cout << "Recieved Connection" << "\n";
+    char buffer[8192];
+    while (true) {
+        client->readFromSocket(buffer, 65536);
+        string input(buffer);
+        cout << "Recieved command: " << input << "\n";
 
+        if (input == "q" || input == "Q") break;
+            try
+            {
+                memset(buffer, 0, 8192);
+                string ret = s.parseInput(input);
+                cout << "Returned: " << ret << "\n";
+                if (ret == "") ret = "\n";
+                strcpy(buffer, ret.c_str());
+                client->writeToSocket(buffer, strlen(buffer));
+            }
+            catch(...)
+            {
+                cerr << "Error parsing input\n";
+            }
+    }
+    delete client;
     
     return 0;
 }

@@ -1,4 +1,0 @@
-FACT Father(Roger   ,   John)
-FACT  Mother(Marry,John)
-FACT Brother(Joseph,Marry)
-RULE Uncle($X,$Y):- AND Brother($X,$Y) Father($Y,$Z)

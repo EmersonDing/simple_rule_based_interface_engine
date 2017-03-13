@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <mutex>
 #include <thread>
 #include "knowledge.hpp"
 #include "rulebase.hpp"
@@ -46,7 +47,7 @@ public:
     
     void parseAndInsertRule(string rule, bool logOp); //used to simplify code when parsing input and inserting
     
-    void parseInput(string input);		// parse input string
+    string parseInput(string input);		// parse input string
     vector<pair<string, string>> queryRule(string _rule, string start = "", string end = "");
     void load(const string& path);			// load rules and facts.
     void dump(const string& path = "out.txt");			// dump rules and facts. 

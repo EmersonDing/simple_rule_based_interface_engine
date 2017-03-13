@@ -133,7 +133,7 @@ vector<pair<string, string>> SRI::queryRule(string _rule, string start, string e
 
 
 
-void SRI::parseInput(string input)
+string SRI::parseInput(string input)
 {
 
 
@@ -151,7 +151,7 @@ void SRI::parseInput(string input)
         }
     
         load(fileName);
-    
+        return "";
     }
     else if(command == "DUMP")
     {
@@ -169,7 +169,7 @@ void SRI::parseInput(string input)
             dump(fileName);
         else
             dump(); //default to out.sri
-            
+        return "";
     }
     else if(command == "FACT")
     {
@@ -183,6 +183,7 @@ void SRI::parseInput(string input)
 
     
         insertFact(factInfo[0], factInfo[1], factInfo[2]);
+        return "";
     }
     else if(command == "RULE")
     {
@@ -208,12 +209,11 @@ void SRI::parseInput(string input)
             logOp = false;
         else
         {
-            cout << "Invalid logical relation. Must be AND/OR. Rule was not stored." << endl;
-            return;
+            return "Invalid logical relation. Must be AND/OR. Rule was not stored. \n";
         }
         
         parseAndInsertRule(ruleDef,logOp);
-        
+        return "";
         }
     else if(command == "DROP")
     {
@@ -238,6 +238,7 @@ void SRI::parseInput(string input)
             std::vector<std::string> factInfo = InputParser::tokenize(ruleOrFact);
             dropFact(factInfo[0], factInfo[1], factInfo[2]);
         }
+        return "";
     }
     
     else if(command == "INFERENCE")
@@ -275,14 +276,14 @@ void SRI::parseInput(string input)
                 insertFact( inferenceInfo[3], result.first, result.second);
         }
         else
-            InputParser::printPair(queryResults, varNames); //only print if facts aren't being declared based on inference
+            return InputParser::printPair(queryResults, varNames); //only print if facts aren't being declared based on inference
         
        
-        
+    return "";  
     }
     else
     {
-        cout << "Unknown command. All commands must be in all caps, and must be one of the following: LOAD, DUMP, FACT, RULE, INFERENCE, or DROP\n";
+        return "Unknown command. All commands must be in all caps, and must be one of the following: LOAD, DUMP, FACT, RULE, INFERENCE, or DROP\n";
     }
 
 

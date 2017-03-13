@@ -130,8 +130,9 @@ std::vector<std::string> InputParser::tokenize(std::string& s) //when only given
 }
 
 
-void InputParser::printPair(vector<pair<string, string>> v, std::pair<string, string> varNames)
+string InputParser::printPair(vector<pair<string, string>> v, std::pair<string, string> varNames)
 {
+    string ret;
     //if the query was filtered, update output accordingly. We know query is filtered when varName is blank
     if(varNames.first != "")
         varNames.first.append(":");
@@ -144,7 +145,11 @@ void InputParser::printPair(vector<pair<string, string>> v, std::pair<string, st
             r.first = "";
         if(varNames.second[1] != ':')
             r.second = "";
-            
-        cout << varNames.first  << r.first << '\t' << varNames.second  << r.second << endl;
+        ret += r.first;
+        ret += "\t";
+        ret += r.second;
+        ret += "\n";
+        //cout << varNames.first  << r.first << '\t' << varNames.second  << r.second << endl;
     }
+    return ret;
 }
