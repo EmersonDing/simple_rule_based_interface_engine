@@ -1,7 +1,7 @@
 # Group Number 9
 
 CC     = g++
-CFLAGS = -g -Wall -O0 -std=c++11 -D_SVID_SOURCE
+CFLAGS = -g -Wall -O0 -std=c++11 -D_SVID_SOURCE -pthread
 
 sri:	main.o sri.o knowledge.o rulebase.o InputParser.o
 	${CC} -o sri ${CFLAGS} main.o sri.o knowledge.o rulebase.o InputParser.o
