@@ -18,6 +18,7 @@
 #include <unordered_set>
 #include <list>
 #include <thread>
+#include <mutex>
 #include "knowledge.hpp"
 #include "rulebase.hpp"
 
