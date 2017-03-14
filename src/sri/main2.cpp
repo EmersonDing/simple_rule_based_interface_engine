@@ -19,11 +19,14 @@ int main() {
     TCPSocket client(addr, 9999);
     
     char buffer[8192];
-    string input = "";
+    string input;
     
     while (input != "q" && input != "Q") {
-        printf("Enter an SRI comand, or (Q)uit : ");
-        getline(cin, input);
+        input = "";
+        while (input == "") {
+            printf("Enter an SRI comand, or (Q)uit : ");
+            getline(cin, input);
+        }
         int ret = client.writeToSocket(input.c_str(), input.length());
         //cout << "Wrote " << ret << " bytes" << "\n";
         client.readFromSocket(buffer, 65536);

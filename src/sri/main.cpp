@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <thread>
 #include "sri.hpp"
 #include "TCPServerSocket.h"
 
@@ -15,34 +16,46 @@
 
 using namespace std;
 
-
-int main() {
+void handleConnection(TCPSocket *client) {
+    cout << "Started client thread\n";
     SRI s;
-    TCPServerSocket server(9999);
-    TCPSocket * client = server.getConnection();
-    cout << "Recieved Connection" << "\n";
     char buffer[8192];
+    
     while (true) {
         client->readFromSocket(buffer, 65536);
         string input(buffer);
-        cout << "Recieved command: " << input << "\n";
+        memset(buffer, 0, 8192);
+        string ret;
 
         if (input == "q" || input == "Q") break;
             try
             {
-                memset(buffer, 0, 8192);
-                string ret = s.parseInput(input);
-                cout << "Returned: " << ret << "\n";
+                ret = s.parseInput(input);
                 if (ret == "") ret = "\n";
-                strcpy(buffer, ret.c_str());
-                client->writeToSocket(buffer, strlen(buffer));
             }
             catch(...)
             {
-                cerr << "Error parsing input\n";
+                ret = "Error parsing input\n";
             }
+        strcpy(buffer, ret.c_str());
+        client->writeToSocket(buffer, strlen(buffer));
     }
     delete client;
+    cout << "Ended client thread\n";
+}
+
+void call_from_thread(string s) {
+    cout << s << "\n";
+}
+
+int main() {
+    bool running = true;
+    TCPServerSocket server(9999);
+    while (running) {
+        TCPSocket * client = server.getConnection();
+        cout << "Recieved Connection" << "\n";
+        thread(handleConnection, client).detach();
+    }
     
     return 0;
 }
