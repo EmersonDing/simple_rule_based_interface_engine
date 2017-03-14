@@ -16,7 +16,7 @@ bool InputParser::isRule(string factOrRule)
 {
     char nextChar;
     std::string st;
-    int i = 0;
+    unsigned int i = 0;
     
     while(i < factOrRule.length())
     {
@@ -36,7 +36,7 @@ std::vector<std::string> InputParser::tokenize(std::string& s, unordered_map<str
     
     char nextChar;
     std::string st;
-    int i = 0;
+    unsigned int i = 0;
     int j = 0; //keeps track of which word was just added so we can link predicates to variables, i.e Father to $X, $Y
     
     while(i < s.length())
@@ -100,7 +100,7 @@ std::vector<std::string> InputParser::tokenize(std::string& s) //when only given
     
     char nextChar;
     std::string st;
-    int i = 0;
+    unsigned int i = 0;
     
     while(i < s.length())
     {

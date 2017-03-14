@@ -286,7 +286,7 @@ void SRI::parseAndInsertRule(string ruleDef, bool logOp)
     ruleParams.second = factParams[ruleName].second;
     
     
-    for(int i = 1; i < ruleInfo.size(); i++)
+    for(unsigned int i = 1; i < ruleInfo.size(); i++)
     {
         string factName = ruleInfo[i];
         pair<string, string> factPreds = factParams[factName];
