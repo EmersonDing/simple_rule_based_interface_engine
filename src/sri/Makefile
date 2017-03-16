@@ -5,13 +5,13 @@ CFLAGS = -g -Wall -O0 -std=c++11 -D_SVID_SOURCE -pthread
 
 all: server client
 
-server: main.o TCPServerSocket.o sri.o knowledge.o rulebase.o
-	${CC} -o server ${CFLAGS} main.cpp
+server: main.o TCPServerSocket.o sri.o knowledge.o rulebase.o TCPSocket.o
+	${CC} -o server ${CFLAGS} main.o TCPServerSocket.o TCPSocket.o sri.o knowledge.o rulebase.o
 
 client: main2.o TCPSocket.o sri.o 
-	${CC} —o client  ${CFLAGS} main2.cpp
+	${CC} —o client  ${CFLAGS} main2.o TCPSocket.o sri.o
 
-main.o:	main.cpp sri.hpp knowledge.hpp rulebase.hpp TCPServerSocket.h TCPSocket.h
+main.o:	main.cpp sri.hpp knowledge.hpp rulebase.hpp TCPServerSocket.h TCPSocket.h  
 	${CC} -c ${CFLAGS} main.cpp
 
 main2.o: main2.cpp sri.hpp knowledge.hpp rulebase.hpp TCPSocket.h
