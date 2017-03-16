@@ -13,7 +13,7 @@ TCPSocket::TCPSocket(char* _address, int port, int readBufferSize, int writeBuff
     memset((char *) &serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(port);
-    server = gethostbyname(_address);
+    struct hostent *server = gethostbyname(_address);
     if (server == NULL) throw(1);
     memcpy((char *) &serverAddr.sin_addr.s_addr, (char *) server->h_addr, server->h_length);
     //memcpy(&(serverAddr.sin_zero), 0, 8);
@@ -26,7 +26,6 @@ TCPSocket::TCPSocket(char* _address, int port, int readBufferSize, int writeBuff
 }
 
 TCPSocket::~TCPSocket() {
-    if (server != NULL) delete(server);
     close(sock);
     std::cout << "Socket closed" << "\n";
 }

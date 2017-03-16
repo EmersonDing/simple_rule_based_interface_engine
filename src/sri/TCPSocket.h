@@ -16,7 +16,6 @@ class TCPSocket // TCP Socket Class
 private:
     int sock;
     struct sockaddr_in serverAddr;
-    struct hostent *server;
 public:
     // A constructor that performs all the client connection initialization to a server socket
     TCPSocket (char * _address, int port, int readBufferSize=65536, int writeBufferSize=65536);
