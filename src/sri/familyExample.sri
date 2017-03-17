@@ -12,4 +12,3 @@ RULE GrandMother($X,$Y):- AND Mother($X,$Z) Father($Z,$Y)
 INFERENCE GrandFather($X,$Y)
 INFERENCE GrandFather($X,$Y) GF
 DROP GF
-DROP Parent
